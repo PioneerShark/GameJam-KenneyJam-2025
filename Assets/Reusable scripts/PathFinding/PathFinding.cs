@@ -6,7 +6,7 @@ using System.Linq;
 using System;
 public class PathFinding : MonoBehaviour
 {
-    Grid grid;
+    GridPi grid;
     PathRequestManager requestManager;
     [SerializeField]
     LayerMask wallMask;
@@ -15,7 +15,7 @@ public class PathFinding : MonoBehaviour
     private void Awake()
     {
         requestManager = GetComponent<PathRequestManager>();
-        grid = GetComponent<Grid>();
+        grid = GetComponent<GridPi>();
     }
 
 
