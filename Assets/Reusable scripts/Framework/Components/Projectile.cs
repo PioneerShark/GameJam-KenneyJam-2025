@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.AppUI.Core;
 using UnityEngine;
 using static Framework;
 using static TrailComponent;
