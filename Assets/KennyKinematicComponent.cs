@@ -1,9 +1,12 @@
+using NUnit.Framework.Constraints;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class KennyKinematicComponent : MonoBehaviour
 {
     [SerializeField] private Transform _rootTransform;
     [SerializeField] private Transform _spineTransform;
+    [SerializeField] private GameObject[] _rigConstraints;
 
     public Vector3 GetRootPosition()
     {
@@ -26,5 +29,18 @@ public class KennyKinematicComponent : MonoBehaviour
     public void LerpSpineRotation(Vector3 eulerAngles, float lerpValue = 0.05f)
     {
         _spineTransform.rotation = Quaternion.Lerp(_spineTransform.rotation, Quaternion.Euler(eulerAngles), lerpValue);
+    }
+
+    public void LerpRigConstraintWeight(float weight, float lerpValue = 0.05f)
+    {
+        // IRigConstraint
+        foreach (GameObject rigConstraint in _rigConstraints)
+        {
+            IRigConstraint component = rigConstraint.GetComponent<IRigConstraint>();
+            if (component != null)
+            {
+                component.weight = Mathf.Lerp(component.weight, weight, lerpValue);
+            }
+        }
     }
 }
