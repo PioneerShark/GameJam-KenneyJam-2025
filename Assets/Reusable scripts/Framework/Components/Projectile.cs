@@ -133,7 +133,7 @@ public class Projectile : MonoBehaviour
 
     void ShootProjectile(Vector3 velocity)
     {
-        angle = Mathf.Atan2(direction.z, direction.x) * (180 / Mathf.PI);
+        angle = Mathf.Atan2(direction.x, direction.z) * (180 / Mathf.PI);
         sprite.transform.eulerAngles = new Vector3(0, angle, 0);
         
         distPerIteration = velocity.magnitude;

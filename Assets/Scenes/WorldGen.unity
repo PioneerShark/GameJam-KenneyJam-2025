@@ -274,10 +274,10 @@ MonoBehaviour:
   displayGridGizmos: 1
   unwalkableMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 128
   floorMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 64
   gridWorldSize: {x: 640, y: 480}
   nodeRadius: 2
   nodeSkin: 1.8
