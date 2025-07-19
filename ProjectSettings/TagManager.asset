@@ -4,7 +4,12 @@
 TagManager:
   serializedVersion: 3
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   tags: []
+=======
+  tags:
+  - AttackPlane
+>>>>>>> Stashed changes
 =======
   tags:
   - AttackPlane
@@ -14,7 +19,11 @@ TagManager:
   - TransparentFX
   - Ignore Raycast
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   - Floor
+=======
+  - Mouse
+>>>>>>> Stashed changes
 =======
   - Mouse
 >>>>>>> Stashed changes
@@ -23,6 +32,10 @@ TagManager:
   - Wall
   - 
   - 
+<<<<<<< Updated upstream
+=======
+  - 
+>>>>>>> Stashed changes
   - Player
   - Enemy
   - 
