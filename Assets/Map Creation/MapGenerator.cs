@@ -159,26 +159,27 @@ public class MapGenerator : MonoBehaviour
         
         foreach (RoomSpawns cell in spawnedCells)
         {
+            Debug.Log(cell.index);
             int x = cell.index % 10;
             int y = cell.index / 10;
-            if (cell.index == 55) cell.roomStatus = RoomStatus.Completed;
                 Vector3 position = new Vector3(x * (cellSizeX + cellGapX), 0f, y * (cellSizeY + cellGapY));
             position = position - new Vector3((cellSizeX + cellGapX) * 5, 0, (cellSizeY + cellGapY) * 5);
             if (floorPlan[cell.index + 1] == 1)
             {
                 
-                Vector3 endPos = position + new Vector3(cellSizeX/2+2,0,-2);
+                Vector3 endPos = position + new Vector3(cellSizeX/2,0,0);
                 Door door = Instantiate(doorPrefab, endPos, Quaternion.identity);
                 door.orientation = DoorOrientation.Right;
                 door.transform.Rotate(0, 90, 0);
                 door.doorEndPosition = endPos + new Vector3(cellGapX+4, 0, 0);
                 spawnedAddons.Add(door.gameObject);
                 cell.doors.Add(door);
+                cell.spawnLocations.Add(door.spawnLocation);
                 if (cell.index == 55) door.active = true;
             }
             else
             {
-                Vector3 endPos = position + new Vector3(cellSizeX / 2 + 2, 0, -2);
+                Vector3 endPos = position + new Vector3(cellSizeX / 2, 0, 0);
                 GameObject wall = Instantiate(wallPrefab, endPos, Quaternion.identity);
                 wall.transform.Rotate(0, 270, 0);
                 spawnedAddons.Add(wall);
@@ -187,19 +188,20 @@ public class MapGenerator : MonoBehaviour
             if (floorPlan[cell.index - 1] == 1)
             {
 
-                Vector3 endPos = position - new Vector3(cellSizeX / 2 - 2, 0, 2);
+                Vector3 endPos = position - new Vector3(cellSizeX / 2, 0, 0);
                 Door door = Instantiate(doorPrefab, endPos, Quaternion.identity);
                 door.orientation = DoorOrientation.Left;
                 door.transform.Rotate(0, 270, 0);
                 door.doorEndPosition = endPos - new Vector3(cellGapX + 4, 0, 0);
                 spawnedAddons.Add(door.gameObject);
                 cell.doors.Add(door);
+                cell.spawnLocations.Add(door.spawnLocation);
                 if (cell.index == 55) door.active = true;
 
             }
             else
             {
-                Vector3 endPos = position - new Vector3(cellSizeX / 2 - 2, 0, 2);
+                Vector3 endPos = position - new Vector3(cellSizeX / 2, 0, 0);
                 GameObject wall = Instantiate(wallPrefab, endPos, Quaternion.identity);
                 wall.transform.Rotate(0, 90, 0);
                 spawnedAddons.Add(wall);
@@ -209,17 +211,18 @@ public class MapGenerator : MonoBehaviour
             if (floorPlan[cell.index + 10] == 1)
             {
 
-                Vector3 endPos = position + new Vector3(2, 0, cellSizeY / 2 - 2);
+                Vector3 endPos = position + new Vector3(0, 0, cellSizeY / 2);
                 Door door = Instantiate(doorPrefab, endPos, Quaternion.identity);
                 door.orientation = DoorOrientation.Up;
                 door.doorEndPosition = endPos + new Vector3(0, 0, cellGapY + 4);
                 spawnedAddons.Add(door.gameObject);
                 cell.doors.Add(door);
+                cell.spawnLocations.Add(door.spawnLocation);
                 if (cell.index == 55) door.active = true;
             }
             else
             {
-                Vector3 endPos = position + new Vector3(2, 0, cellSizeY / 2 - 2);
+                Vector3 endPos = position + new Vector3(0, 0, cellSizeY / 2);
                 GameObject wall = Instantiate(wallPrefab, endPos, Quaternion.identity);
                 wall.transform.Rotate(0, 180, 0);
                 spawnedAddons.Add(wall);
@@ -228,22 +231,24 @@ public class MapGenerator : MonoBehaviour
             if (floorPlan[cell.index - 10] == 1)
             {
 
-                Vector3 endPos = position - new Vector3( - 2, 0, cellSizeY / 2 +2);
+                Vector3 endPos = position - new Vector3( 0, 0, cellSizeY / 2);
                 Door door = Instantiate(doorPrefab, endPos, Quaternion.identity);
                 door.orientation = DoorOrientation.Down;
                 door.transform.Rotate(0, 180, 0);
                 door.doorEndPosition = endPos - new Vector3(0, 0, cellGapY + 4);
                 spawnedAddons.Add(door.gameObject);
                 cell.doors.Add(door);
+                cell.spawnLocations.Add(door.spawnLocation);
                 if (cell.index == 55) door.active = true;
             }
             else
             {
-                Vector3 endPos = position - new Vector3( -2, 0, cellSizeY / 2 + 2);
+                Vector3 endPos = position - new Vector3(0, 0, cellSizeY / 2);
                 GameObject wall = Instantiate(wallPrefab, endPos, Quaternion.identity);
                 spawnedAddons.Add(wall);
 
             }
+            if (cell.index == 55) cell.MakeSafe();
         }
     }
 }

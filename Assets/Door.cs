@@ -5,12 +5,12 @@ public class Door : MonoBehaviour
 {
     public int indexLocation;
     public DoorOrientation orientation;
-    public bool active = true;
+    public bool active = false;
     public Vector3 doorEndPosition;
+    public Transform spawnLocation;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        active = false;
     }
 
     // Update is called once per frame

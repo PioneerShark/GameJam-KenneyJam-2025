@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Rogue
   m_EditorClassIdentifier: 
   primaryFire: {fileID: 11400000, guid: e36d453156f523647bfb5737451ad796, type: 2}
-  secondaryFire: {fileID: 11400000, guid: e36d453156f523647bfb5737451ad796, type: 2}
+  secondaryFire: {fileID: 11400000, guid: fc753be2ed207fb4eae98a06fe555586, type: 2}
   ammoMax: 120
   ammoStored: 60
   ammoRegenRate: 2
