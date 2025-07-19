@@ -3,41 +3,19 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   tags: []
-=======
-  tags:
-  - AttackPlane
->>>>>>> Stashed changes
-=======
-  tags:
-  - AttackPlane
->>>>>>> Stashed changes
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  - Floor
-=======
-  - Mouse
->>>>>>> Stashed changes
-=======
-  - Mouse
->>>>>>> Stashed changes
+  - 
   - Water
   - UI
-  - Wall
   - 
   - 
-<<<<<<< Updated upstream
-=======
   - 
->>>>>>> Stashed changes
-  - Player
-  - Enemy
+  - 
+  - 
   - 
   - 
   - 
@@ -65,10 +43,3 @@ TagManager:
     locked: 0
   m_RenderingLayers:
   - Default
-  - Light Layer 1
-  - Light Layer 2
-  - Light Layer 3
-  - Light Layer 4
-  - Light Layer 5
-  - Light Layer 6
-  - Light Layer 7
