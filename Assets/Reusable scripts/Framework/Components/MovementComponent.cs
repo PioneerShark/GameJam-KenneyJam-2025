@@ -25,6 +25,7 @@ public class MovementComponent : MonoBehaviour
     int collideIterations = 5;
     public Collider col;
     public LayerMask collisionMask;
+    public LayerMask pushMask;
 
     [HideInInspector]
     public Vector2 moveVector;
@@ -50,6 +51,7 @@ public class MovementComponent : MonoBehaviour
         direction = direction.normalized;
         Vector3 vel = moveSpeed * Time.deltaTime * new Vector3(direction.x, 0, direction.y);
         transform.position += CollideAndSlide(vel, transform.position + posOffset);
+        transform.position = new Vector3(transform.position.x, 0, transform.position.z);
     }
 
     public void MoveTo(Vector3 destination)
@@ -80,10 +82,29 @@ public class MovementComponent : MonoBehaviour
     {
         if (!isDashing)
         {
-            Move(moveVector);
+            Move(moveVector + Repel());
         }
+
+        Repel();
     }
 
+    private Vector2 Repel()
+    {
+        Collider[] collisions = Physics.OverlapSphere(transform.position + new Vector3(0, 1, 0), col.bounds.extents.x, pushMask);
+        Vector3 location = new Vector3(0, 0, 0);
+        foreach (Collider col in collisions)
+        {
+            location = location + col.transform.position;
+        }
+        if (collisions.Length == 0)
+        {
+            return Vector2.zero;
+        }
+        location = location / collisions.Length;
+        location = location - transform.position;
+        Vector2 pushVector = new Vector2(location.x, location.z) * 1f;
+        return -pushVector;
+    }
     public async UniTask Dash(Vector3 dir, float dashSpeed, float dashDuration)
     {
         if (isDashing) return;

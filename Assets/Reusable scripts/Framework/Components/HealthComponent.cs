@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using static Framework;
 
 public class HealthComponent : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class HealthComponent : MonoBehaviour
     private SpriteRenderer[] spriteRenderers;
     private Material[] materials;
 
+    EventService EventService;
 
     UnityEvent<Room> OnDeathEvent;
     Room roomID;
@@ -27,7 +29,7 @@ public class HealthComponent : MonoBehaviour
 
     private void Awake()
     {
-        
+        EventService = Game.GetService<EventService>();
         healthCurrent = healthMax;
         spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
         InitialiseMaterials();
@@ -62,7 +64,10 @@ public class HealthComponent : MonoBehaviour
         {
             OnDeathEvent.Invoke(roomID);
         }
-        
+        if(gameObject.tag != "Player")
+        {
+            EventService.Fire("AddPower");
+        }
         Destroy(this.gameObject);
     }
 

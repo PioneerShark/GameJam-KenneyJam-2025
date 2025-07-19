@@ -37,13 +37,22 @@ public class RoomSpawns : MonoBehaviour
                 CheckCollisions();
                 break;
             case RoomStatus.Completed:
+                List<HealthComponent> tempSpawned = new();
+                for (int i = 0; i < spawnedEnemies.Count; i++)
+                {
+                    if (spawnedEnemies[i] != null)
+                    {
+                        tempSpawned.Add(spawnedEnemies[i]);
+                    }
+                }
+                spawnedEnemies = tempSpawned;
                 if (spawnedEnemies.Count <= 0)
                 {
                     EndWaves();
                 }
                 break;
             case RoomStatus.InProgress:
-                List<HealthComponent> tempSpawned = new();
+                tempSpawned = new();
                 for (int i = 0; i < spawnedEnemies.Count; i++)
                 {
                     if (spawnedEnemies[i] != null)

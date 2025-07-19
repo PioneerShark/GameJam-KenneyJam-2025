@@ -10,13 +10,16 @@ public class KennyGameManager : MonoBehaviour
 	// Components
 	private CameraComponent _CameraComponent;
 
+	int power = 0;
+
 	void Awake()
 	{
 		EventService = Game.GetService<EventService>();
 		TryGetComponent<CameraComponent>(out _CameraComponent);
 
 		EventService.Connect("SetCameraPosition", OnSetCameraPosition);
-	}
+        EventService.Connect("AddPower", AddPower);
+    }
 
     void Start()
     {
@@ -35,4 +38,11 @@ public class KennyGameManager : MonoBehaviour
 			Debug.Log("Failed");
 		}
     }
+
+	void AddPower()
+	{
+		power += 10;
+		Debug.Log(power);
+	}
+	
 }

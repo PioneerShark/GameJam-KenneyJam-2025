@@ -91,15 +91,23 @@ public class KennyEnemyController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (moveTowardsTarget)
+        
+        if (_target == null)
         {
-            if ((transform.position - _target.position).sqrMagnitude > moveTowardsAcceptanceRange && _attacking == false)
+            Move(Vector2.zero);
+        }
+        else
+        {
+            if (moveTowardsTarget)
             {
-                Move(new Vector2(_lookVector2Lerped.x, _lookVector2Lerped.y));
-            }
-            else
-            {
-                Move(Vector2.zero);
+                if ((transform.position - _target.position).sqrMagnitude > moveTowardsAcceptanceRange && _attacking == false)
+                {
+                    Move(new Vector2(_lookVector2Lerped.x, _lookVector2Lerped.y));
+                }
+                else
+                {
+                    Move(Vector2.zero);
+                }
             }
         }
     }
@@ -205,6 +213,14 @@ public class KennyEnemyController : MonoBehaviour
         await UniTask.Delay(700);
 
         // Melee attack, sphere cast
+        if (Vector3.Distance(transform.position, _target.position) < 5f) 
+        {
+            _target.GetComponent<HealthComponent>().TakeDamage(1);
+        }
+        
+    
+            
+        
 
         await UniTask.Delay(300);
         _attacking = false;

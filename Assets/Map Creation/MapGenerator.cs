@@ -38,8 +38,8 @@ public class MapGenerator : MonoBehaviour
         cellSizeX = 32f;
         cellSizeY = 24f;
 
-        cellGapX = 32f;
-        cellGapY = 24f;
+        cellGapX = 20f;
+        cellGapY = 20f;
 
         spawnedCells = new();
         spawnedAddons = new();
@@ -172,6 +172,9 @@ public class MapGenerator : MonoBehaviour
                 door.orientation = DoorOrientation.Right;
                 door.transform.Rotate(0, 90, 0);
                 door.doorEndPosition = endPos + new Vector3(cellGapX+4, 0, 0);
+                door.roomCenter = position;
+                door.roomDistX = cellSizeX + cellGapX;
+                door.roomDistY = cellSizeY + cellGapY;
                 spawnedAddons.Add(door.gameObject);
                 cell.doors.Add(door);
                 cell.spawnLocations.Add(door.spawnLocation);
@@ -193,6 +196,9 @@ public class MapGenerator : MonoBehaviour
                 door.orientation = DoorOrientation.Left;
                 door.transform.Rotate(0, 270, 0);
                 door.doorEndPosition = endPos - new Vector3(cellGapX + 4, 0, 0);
+                door.roomCenter = position;
+                door.roomDistX = cellSizeX + cellGapX;
+                door.roomDistY = cellSizeY + cellGapY;
                 spawnedAddons.Add(door.gameObject);
                 cell.doors.Add(door);
                 cell.spawnLocations.Add(door.spawnLocation);
@@ -215,6 +221,9 @@ public class MapGenerator : MonoBehaviour
                 Door door = Instantiate(doorPrefab, endPos, Quaternion.identity);
                 door.orientation = DoorOrientation.Up;
                 door.doorEndPosition = endPos + new Vector3(0, 0, cellGapY + 4);
+                door.roomCenter = position;
+                door.roomDistX = cellSizeX + cellGapX;
+                door.roomDistY = cellSizeY + cellGapY;
                 spawnedAddons.Add(door.gameObject);
                 cell.doors.Add(door);
                 cell.spawnLocations.Add(door.spawnLocation);
@@ -236,6 +245,9 @@ public class MapGenerator : MonoBehaviour
                 door.orientation = DoorOrientation.Down;
                 door.transform.Rotate(0, 180, 0);
                 door.doorEndPosition = endPos - new Vector3(0, 0, cellGapY + 4);
+                door.roomCenter = position;
+                door.roomDistX = cellSizeX + cellGapX;
+                door.roomDistY = cellSizeY + cellGapY;
                 spawnedAddons.Add(door.gameObject);
                 cell.doors.Add(door);
                 cell.spawnLocations.Add(door.spawnLocation);

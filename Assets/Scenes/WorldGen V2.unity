@@ -772,9 +772,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 692151790}
-  cellPrefab: {fileID: 4289807973223184327, guid: 700ade69e7b44644f8f3212b5f5d9732, type: 3}
+  cellPrefab: {fileID: 4289807973223184327, guid: 11eae7ad14fc6bd4ba470956945cdb99, type: 3}
   doorPrefab: {fileID: -7030697919473462988, guid: f81b12b517f834b46a650a4e98ddcea9, type: 3}
-  wallPrefab: {fileID: 1627486520595552508, guid: a928b5547a735414b80afc1987512b6c, type: 3}
+  wallPrefab: {fileID: 1627486520595552508, guid: b3f35353501b38d4eadc9cc6e4fcf6e4, type: 3}
   reset: 0
 --- !u!4 &1116441982
 Transform:
@@ -919,6 +919,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 182702739757289109, guid: 6bfa64e8029ac0142a8aeded9de44a4c, type: 3}
+      propertyPath: healthMax
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 1337946560107375981, guid: 6bfa64e8029ac0142a8aeded9de44a4c, type: 3}
       propertyPath: distance
       value: 8
@@ -983,7 +987,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 4475854547207466798, guid: 6bfa64e8029ac0142a8aeded9de44a4c, type: 3}
+      propertyPath: pushMask.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7792179168008500956, guid: 6bfa64e8029ac0142a8aeded9de44a4c, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 7792179168008500956, guid: 6bfa64e8029ac0142a8aeded9de44a4c, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

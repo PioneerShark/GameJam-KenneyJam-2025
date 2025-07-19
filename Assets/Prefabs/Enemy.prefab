@@ -849,7 +849,10 @@ MonoBehaviour:
   col: {fileID: 0}
   collisionMask:
     serializedVersion: 2
-    m_Bits: 896
+    m_Bits: 384
+  pushMask:
+    serializedVersion: 2
+    m_Bits: 768
   moveVector: {x: 0, y: 0}
 --- !u!114 &785697111363437912
 MonoBehaviour:

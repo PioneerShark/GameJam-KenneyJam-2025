@@ -35,6 +35,7 @@ public class Projectile : MonoBehaviour
     bool active = true;
 
     [SerializeField] GameObject sprite;
+    [SerializeField] GameObject model;
 
     float angle;
 
@@ -94,6 +95,7 @@ public class Projectile : MonoBehaviour
     {
         lastHitTime = Time.time;
         line.AppendLineVertex(transform.position);
+        line.ClearLines();
     }
 
     // Update is called once per frame
@@ -221,10 +223,12 @@ public class Projectile : MonoBehaviour
     private void DisableProjectile()
     {
         active = false;
+        gameObject.layer = 0;
         line.AppendLineVertex(transform.position);
-        sprite.SetActive(false);
+        model.SetActive(false);
         Invoke("Remove", 3f);
     }
+
 
     void HandleCollision(RaycastHit hit, Vector3 velocity)
     {
@@ -245,6 +249,7 @@ public class Projectile : MonoBehaviour
         }
         else
         {
+            gameObject.layer = 0;
             line.AppendLineVertex(transform.position);
             speed = 0;
             active = false;
@@ -319,6 +324,7 @@ public class Projectile : MonoBehaviour
         {
             case ProjectileType.Bullet:
                 targetsHit.Clear();
+                line.ClearLines();
                 active = true;
                 sprite.SetActive(true);
                 lastTargetHit = null;
