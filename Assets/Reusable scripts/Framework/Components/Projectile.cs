@@ -49,7 +49,7 @@ public class Projectile : MonoBehaviour
         this.speed = speed;
         this.damage = damage;
         angle = Mathf.Atan2(direction.z, direction.x) * (180 / Mathf.PI);
-        sprite.transform.eulerAngles = new Vector3(45, transform.rotation.y, angle);
+        sprite.transform.eulerAngles = new Vector3(0, transform.rotation.y, angle);
     }
     public void ProjectileStats(Vector3 direction, float speed, int damage, float lifeSpan, LayerMask targetMask)
     {
@@ -59,7 +59,7 @@ public class Projectile : MonoBehaviour
         gameObject.layer = targetMask;
         this.lifeSpan = lifeSpan;
         angle = Mathf.Atan2(direction.z, direction.x) * (180 / Mathf.PI);
-        sprite.transform.eulerAngles = new Vector3(45, transform.rotation.y, angle);
+        sprite.transform.eulerAngles = new Vector3(0, transform.rotation.y, angle);
     }
 
     public void ProjectileStats(Vector3 direction, float speed, int damage, int bounces, int penetrations, float lifeSpan, LayerMask targetMask)
@@ -72,7 +72,7 @@ public class Projectile : MonoBehaviour
         gameObject.layer = targetMask;
         this.lifeSpan = lifeSpan;
         angle = Mathf.Atan2(direction.z, direction.x) * (180 / Mathf.PI);
-        sprite.transform.eulerAngles = new Vector3(45, transform.rotation.y, angle);
+        sprite.transform.eulerAngles = new Vector3(0, transform.rotation.y, angle);
 
     }
 
@@ -134,7 +134,7 @@ public class Projectile : MonoBehaviour
     void ShootProjectile(Vector3 velocity)
     {
         angle = Mathf.Atan2(direction.z, direction.x) * (180 / Mathf.PI);
-        sprite.transform.eulerAngles = new Vector3(45, transform.rotation.y, angle);
+        sprite.transform.eulerAngles = new Vector3(0, angle, 0);
         
         distPerIteration = velocity.magnitude;
         if (speed >= 500)
