@@ -31,6 +31,8 @@ public class MovementComponent : MonoBehaviour
 
     private void Awake()
     {
+        //collisionMask = LayerMask.GetMask("Wall");
+        
         Collider[] colliders = gameObject.GetComponents<Collider>();
         foreach (Collider collider in colliders)
         {
