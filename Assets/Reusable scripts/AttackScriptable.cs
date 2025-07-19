@@ -99,7 +99,7 @@ public class AttackScriptable : ScriptableObject
             weapon.SetState(WeaponState.Idle);
             if (weapon.reloadQueued || weapon.GetMag() <= 0)
             {
-                weapon.TryReload();
+                _ = weapon.TryReload();
             }
             skipDelay = false;
             await UniTask.Yield();

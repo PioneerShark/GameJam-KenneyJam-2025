@@ -91,8 +91,10 @@ public class KennyPlayerController : MonoBehaviour
     {
         Vector3 worldMousePosition = _ScreenToPlaneComponent.ScreenToPlane(_currentMousePosition);
         Vector3 lookVector3 = worldMousePosition - new Vector3(transform.position.x, worldMousePosition.y, transform.position.z);
+        Vector3 attackVector3 = worldMousePosition - new Vector3(_attackSpawn.position.x, worldMousePosition.y, _attackSpawn.position.z);
         _lookVector2 = new Vector2(lookVector3.x, lookVector3.z);
         Quaternion characterRotation = Quaternion.LookRotation(lookVector3.normalized);
+        _attackSpawn.position = new Vector3(_attackSpawn.position.x, 1, _attackSpawn.position.z);
 
         if (_moveVector.sqrMagnitude > 0.001f)
         {
@@ -139,7 +141,7 @@ public class KennyPlayerController : MonoBehaviour
         }
 
         _CameraComponent.PanTowards(worldMousePosition);
-        _WeaponComponent.SetAttackDirecton(_lookVector2);
+        _WeaponComponent.SetAttackDirecton(new Vector2(attackVector3.x, attackVector3.z));
     }
 
     void Move(InputAction.CallbackContext context)

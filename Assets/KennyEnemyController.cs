@@ -117,7 +117,7 @@ public class KennyEnemyController : MonoBehaviour
 
         if (!((transform.position - _target.position).sqrMagnitude > moveTowardsAcceptanceRange))
         {
-            TryAttack();
+            _ = TryAttack();
         }
 
         _Animator.SetLayerWeight(2, Mathf.Lerp(_Animator.GetLayerWeight(2), _animationWeights["WholeBody"], Time.deltaTime * _animationTransitionSpeed));
@@ -202,12 +202,15 @@ public class KennyEnemyController : MonoBehaviour
         _animationWeights["IK"] = 0;
         _idleRotationOverride = -_idleRotation;
         _attacking = true;
-        await UniTask.Delay(1000);
+        await UniTask.Delay(700);
+
+        // Melee attack, sphere cast
+
+        await UniTask.Delay(300);
         _attacking = false;
         _animationWeights["WholeBody"] = 0;
         _animationWeights["IK"] = 1;
         _idleRotationOverride = 0;
-        // Melee attack, sphere cast
     }
 
     public void SetTarget(GameObject gameObject)
