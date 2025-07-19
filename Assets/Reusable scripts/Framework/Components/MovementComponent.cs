@@ -13,21 +13,13 @@ public class MovementComponent : MonoBehaviour
     //
     //float dashMultiplier = 2f;
     float dashStartTime;
-    [SerializeField] Animator animator;
-    
 
     [SerializeField] Vector3 posOffset = new (0,1,0);
-
-    [HideInInspector]
-    public float waypointThreshold = 1f;
 
     bool isDashing = false;
 
     [HideInInspector]
     public Transform target;
-
-
-    PathP path;
 
     float skinWidth = 0.06f;
     int collideIterations = 5;
@@ -81,74 +73,15 @@ public class MovementComponent : MonoBehaviour
 
     private void Start()
     {
-        //PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
-        //Invoke("CancelPath", 5);
+
     }
+    
     private void Update()
     {
         if (!isDashing)
         {
             Move(moveVector);
         }
-
-        
-    }
-
-    public void OnPathFound(Vector3[] waypoints, bool pathSuccessful)
-    {
-        if (pathSuccessful)
-        {
-            path = new PathP(waypoints, transform.position);
-            StopCoroutine("FollowPath");
-            StartCoroutine("FollowPath");
-        }
-    }
-    
-    public bool PathActive()
-    {
-        if (path != null)
-        {
-            return true;
-        }
-        else return false;
-    }
-    
-    public bool RequestPath(Transform _target)
-    {
-        target = _target;
-        PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
-        if (path != null) return true;
-        return false;
-    }
-
-    public void CancelPath()
-    {
-        StopCoroutine("FollowPath");
-        path = null;
-    }
-
-    IEnumerator FollowPath()
-    {
-        int i = 0;
-        Vector2 destination;
-        Vector2 playerPos;
-
-        for (i = 0; i < path.lookPoints.Length;)
-        {
-            destination = new Vector2(path.lookPoints[i].x, path.lookPoints[i].z);
-            playerPos = new Vector2(transform.position.x, transform.position.z);
-            if (Vector2.Distance(destination, playerPos) > waypointThreshold)
-            {
-                MoveTo(path.lookPoints[i]);
-            }
-            else
-            {
-                i++;
-            }
-            yield return null;
-        }
-
-        CancelPath();
     }
 
     public async UniTask Dash(Vector3 dir, float dashSpeed, float dashDuration)
@@ -166,6 +99,7 @@ public class MovementComponent : MonoBehaviour
         }
         isDashing = false;
     }
+    
     public async UniTask Dash(Vector3 dir, float dashSpeed, float dashDuration, AnimationCurve curve)
     {
         if (isDashing) return;
@@ -179,7 +113,7 @@ public class MovementComponent : MonoBehaviour
             float speedMult = curve.Evaluate(dashDurationCurrent / dashDuration);
             //await UniTask.Delay((int)(10f));
             dir = dir.normalized;
-            Vector3 vel = speedMult*dashSpeed * Time.deltaTime * new Vector3(dir.x, 0, dir.y);
+            Vector3 vel = speedMult * dashSpeed * Time.deltaTime * new Vector3(dir.x, 0, dir.y);
             transform.position += CollideAndSlide(vel, transform.position + posOffset);
             await UniTask.Yield();
         }
@@ -222,13 +156,5 @@ public class MovementComponent : MonoBehaviour
         vel = new Vector3(vel.x, vel.y, vel.z);
         if (bounced) return resultant+vel;
         else return vel;
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (path != null)
-        {
-            path.DrawWithGizmos();
-        }
     }
 }

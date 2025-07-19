@@ -3,19 +3,28 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
+<<<<<<< Updated upstream
   tags: []
+=======
+  tags:
+  - AttackPlane
+>>>>>>> Stashed changes
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
+<<<<<<< Updated upstream
   - Floor
+=======
+  - Mouse
+>>>>>>> Stashed changes
   - Water
   - UI
   - Wall
   - 
   - 
-  - 
-  - 
+  - Player
+  - Enemy
   - 
   - 
   - 
