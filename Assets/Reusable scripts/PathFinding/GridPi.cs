@@ -36,7 +36,7 @@ public class GridPi : MonoBehaviour
     {
         await UniTask.Yield();
         walkableRegionDict.Clear();
-        await UniTask.Delay(10);
+        await UniTask.Delay(1);
         CreateGrid();
 
         foreach (TerrainType region in walkableReigons)
