@@ -162,6 +162,7 @@ public class MapGenerator : MonoBehaviour
                 Door door = Instantiate(doorPrefab, endPos, Quaternion.identity);
                 door.orientation = DoorOrientation.Right;
                 door.transform.Rotate(0, 90, 0);
+                door.doorEndPosition = position + new Vector3(cellSizeX / 2 + cellGapX+1, 0, 0);
             }
             else
             {
@@ -177,6 +178,7 @@ public class MapGenerator : MonoBehaviour
                 Door door = Instantiate(doorPrefab, endPos, Quaternion.identity);
                 door.orientation = DoorOrientation.Left;
                 door.transform.Rotate(0, 90, 0);
+                door.doorEndPosition = position - new Vector3(cellSizeX / 2 + cellGapX + 1, 0, 0);
             }
             else
             {
@@ -191,6 +193,7 @@ public class MapGenerator : MonoBehaviour
                 Vector3 endPos = position + new Vector3(2, 0, cellSizeY / 2 - 2);
                 Door door = Instantiate(doorPrefab, endPos, Quaternion.identity);
                 door.orientation = DoorOrientation.Up;
+                door.doorEndPosition = position + new Vector3(0, cellSizeY / 2 + cellGapY + 1, 0);
             }
             else
             {
@@ -204,6 +207,7 @@ public class MapGenerator : MonoBehaviour
                 Vector3 endPos = position - new Vector3( - 2, 0, cellSizeY / 2 +2);
                 Door door = Instantiate(doorPrefab, endPos, Quaternion.identity);
                 door.orientation = DoorOrientation.Down;
+                door.doorEndPosition = position + new Vector3(0, cellSizeY / 2 + cellGapY + 1, 0);
             }
             else
             {

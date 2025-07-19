@@ -6,6 +6,7 @@ public class Door : MonoBehaviour
     public int indexLocation;
     public DoorOrientation orientation;
     public bool active = false;
+    public Vector3 doorEndPosition;
     private BoxCollider triggerCollider;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -19,11 +20,16 @@ public class Door : MonoBehaviour
         if (active)
         {
             RaycastHit hit;
-            if (Physics.BoxCast(triggerCollider.bounds.center, 
+            if (Physics.BoxCast(triggerCollider.bounds.center,
                 triggerCollider.gameObject.transform.localScale * 0.5f,
                 transform.forward, out hit, transform.rotation,
-                1f, Physics2D.GetLayerCollisionMask(gameObject.layer))){
-
+                1f, Physics2D.GetLayerCollisionMask(gameObject.layer))) 
+            { 
+                if (hit.collider.CompareTag("Player"))
+                {
+                    gameObject.transform.position = doorEndPosition;
+                }
+                
             }
         }
     }

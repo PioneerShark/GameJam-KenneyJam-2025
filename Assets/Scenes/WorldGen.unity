@@ -284,7 +284,7 @@ MonoBehaviour:
   walkableReigons:
   - terrainMask:
       serializedVersion: 2
-      m_Bits: 8
+      m_Bits: 64
     terrainPenalty: 0
 --- !u!114 &692151791
 MonoBehaviour:
