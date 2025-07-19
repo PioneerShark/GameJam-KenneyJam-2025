@@ -24,15 +24,13 @@ public class MovementComponent : MonoBehaviour
     float skinWidth = 0.06f;
     int collideIterations = 5;
     public Collider col;
-    private LayerMask collisionMask;
+    public LayerMask collisionMask;
 
     [HideInInspector]
     public Vector2 moveVector;
 
     private void Awake()
     {
-        collisionMask = LayerMask.GetMask("Wall");
-        
         Collider[] colliders = gameObject.GetComponents<Collider>();
         foreach (Collider collider in colliders)
         {
