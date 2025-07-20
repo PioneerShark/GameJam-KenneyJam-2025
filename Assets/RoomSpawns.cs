@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
+using static Framework;
 
 public class RoomSpawns : MonoBehaviour
 {
@@ -17,8 +18,10 @@ public class RoomSpawns : MonoBehaviour
     [HideInInspector] public int value;
     public RoomStatus roomStatus;
     private bool running = false;
+    private EventService EventService;
     private void Awake()
     {
+        EventService = Game.GetService<EventService>();
         roomStatus = RoomStatus.Inactive;
         spawnedEnemies = new();
         spawnLocations = new();
@@ -29,7 +32,7 @@ public class RoomSpawns : MonoBehaviour
     {
         switch (roomStatus) {
             case RoomStatus.Primed:
-                
+                EventService.Fire("CombatStatus", true);
                 ShutDoors();
                 HandleWave();
                 break;
@@ -37,6 +40,7 @@ public class RoomSpawns : MonoBehaviour
                 CheckCollisions();
                 break;
             case RoomStatus.Completed:
+                EventService.Fire("CombatStatus", false);
                 List<HealthComponent> tempSpawned = new();
                 for (int i = 0; i < spawnedEnemies.Count; i++)
                 {

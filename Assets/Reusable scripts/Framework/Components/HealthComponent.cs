@@ -45,7 +45,8 @@ public class HealthComponent : MonoBehaviour
         }
     }
 
-    public void TakeDamage(int value) {
+    public void TakeDamage(int value)
+    {
         healthCurrent -= value;
         StartCoroutine(DamageFlash(value));
         if (healthCurrent <= 0)
@@ -55,6 +56,11 @@ public class HealthComponent : MonoBehaviour
         if (gameObject.CompareTag("Player"))
         {
             KennyGameManager.Instance.UpdateHealth((int)healthCurrent);
+            EventService.Fire("PlaySFX", new PlaySFXInfo("PlayerHurt", transform.position));
+        }
+        else
+        {
+            EventService.Fire("PlaySFX", new PlaySFXInfo("EnemyHurt", transform.position));
         }
     }
     public void SetMaxHealth(int value)
@@ -83,9 +89,10 @@ public class HealthComponent : MonoBehaviour
         {
             OnDeathEvent.Invoke(roomID);
         }
-        if(gameObject.tag != "Player")
+        if (gameObject.tag != "Player")
         {
             EventService.Fire("AddPower");
+            EventService.Fire("PlaySFX", new PlaySFXInfo("EnemyDied", transform.position));
         }
         else
         {

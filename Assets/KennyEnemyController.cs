@@ -9,6 +9,9 @@ using static Framework;
 
 public class KennyEnemyController : MonoBehaviour
 {
+    // Services
+	private EventService EventService;
+
     // Components
     protected MovementComponent _MovementComponent;
     protected AnimationComponent _AnimationComponent;
@@ -73,6 +76,8 @@ public class KennyEnemyController : MonoBehaviour
 
     protected void Awake()
     {
+        EventService = Game.GetService<EventService>();
+
         TryGetComponent<MovementComponent>(out _MovementComponent);
         TryGetComponent<KennyKinematicComponent>(out _KennyKinematicComponent);
 
@@ -210,17 +215,17 @@ public class KennyEnemyController : MonoBehaviour
         _animationWeights["IK"] = 0;
         _idleRotationOverride = -_idleRotation;
         _attacking = true;
-        await UniTask.Delay(700);
+
+        await UniTask.Delay(350);
+        EventService.Fire("PlaySFX", new PlaySFXInfo("EnemyAttack", transform.position));
+        await UniTask.Delay(350);
 
         // Melee attack, sphere cast
-        if (Vector3.Distance(transform.position, _target.position) < 5f) 
+        if (Vector3.Distance(transform.position, _target.position) < 5f)
         {
             _target.GetComponent<HealthComponent>().TakeDamage(1);
+            //EventService.Fire("PlaySFX", new PlaySFXInfo("PlayerHurt", _target.position));
         }
-        
-    
-            
-        
 
         await UniTask.Delay(300);
         _attacking = false;

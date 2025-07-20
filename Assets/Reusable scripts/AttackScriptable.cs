@@ -3,6 +3,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using static UnityEngine.ParticleSystem;
+using static Framework;
 
 [CreateAssetMenu(fileName = "Attack Config", menuName = "Attacks/Attack Config", order = 1)]
 public class AttackScriptable : ScriptableObject
@@ -48,15 +49,15 @@ public class AttackScriptable : ScriptableObject
         
     }
 
-
-
     protected virtual void Attack(GameObject parent, int i)
     {
 
     }
+
     protected virtual void BurstStarted()
     {
-
+        EventService EventService = Game.GetService<EventService>();
+        EventService.Fire("PlaySFX", new PlaySFXInfo("RogueAttack"));
     }
 
     protected virtual async UniTask<bool> TryAttack(GameObject parent)
