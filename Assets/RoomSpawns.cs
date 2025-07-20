@@ -80,7 +80,7 @@ public class RoomSpawns : MonoBehaviour
             {
                 await UniTask.Delay((int)(spawnDelay * 1000f));
                 HealthComponent enemy = Instantiate(enemyType, spawnLocations[Random.Range(0, spawnLocations.Count)]);
-                int healthValue = (KennyGameManager.Instance.GetPower()+150)/150;
+                int healthValue = (KennyGameManager.Instance.GetPower()+100)/100;
                 Debug.Log(healthValue);
                 enemy.SetMaxHealth(healthValue);
                 

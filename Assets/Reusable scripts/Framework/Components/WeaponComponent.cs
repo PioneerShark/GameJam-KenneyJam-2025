@@ -157,41 +157,40 @@ public class WeaponComponent : MonoBehaviour
         power = value;
         switch (power)
         {
-            case > 1000:
-                if (!v5) {
+            case > 999:
+                currentWeapon.primaryFire.damage = (value / 500);
+                break;
+            case > 799:
+                    if (v5) return;
                     AttackCancelled(true);
                     v5 = true;
                     AttackCancelled(true);
                     SwapWeapon(4);
-                }
-                else
-                {
-                    currentWeapon.primaryFire.damage = (value/250);
-                }
-
                 break;
-            case > 800:
+            case > 599:
                 if (v4) return;
                 v4 = true;
                 AttackCancelled(true);
                 SwapWeapon(3);
                 AttackCancelled(false);
                 break;
-            case > 600:
+            case > 399:
                 if (v3) return;
                 v3 = true;
                 AttackCancelled(true);
                 SwapWeapon(2);
                 AttackCancelled(false);
                 break;
-            case > 200:
+            case > 199:
                 if (v2) return;
                 v2 = true;
                 AttackCancelled(true);
                 SwapWeapon(1);
                 AttackCancelled(false);
                 break;
-        };
+             
+        }
+        ;
             
     }
 }

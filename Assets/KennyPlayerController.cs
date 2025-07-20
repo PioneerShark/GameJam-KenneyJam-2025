@@ -195,6 +195,7 @@ public class KennyPlayerController : MonoBehaviour
     {
         power = value;
         _WeaponComponent.UpdatePower(power);
+        _MovementComponent.UpdatePower(power);
 
     }
     public int GetHealth()

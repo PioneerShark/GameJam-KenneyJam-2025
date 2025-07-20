@@ -182,6 +182,6 @@ public class MovementComponent : MonoBehaviour
     }
     public void UpdatePower(int value)
     {
-        moveSpeed = moveSpeedInitial + (value+1/ 200f);
+        moveSpeed = moveSpeedInitial + ((value+1)/ 200f);
     }
 }
