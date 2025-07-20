@@ -2,6 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using UnityEngine.UI;
 public class MapGenerator : MonoBehaviour
 {
 
@@ -26,6 +27,12 @@ public class MapGenerator : MonoBehaviour
     private Queue<int> cellQueue;
     private List<RoomSpawns> spawnedCells;
     private List<GameObject> spawnedAddons;
+    private List<Image> cellImages;
+    [SerializeField] private Image cellImage;
+    [SerializeField] private Transform gridObj;
+    [SerializeField] private Sprite inLoc;
+    [SerializeField] private Sprite outLoc;
+
 
     [SerializeField]
     bool reset = false;
@@ -43,6 +50,12 @@ public class MapGenerator : MonoBehaviour
 
         spawnedCells = new();
         spawnedAddons = new();
+        cellImages = new();
+        for (int i = 0; i < 100; i++)
+        {
+            Image sprite = Instantiate(cellImage, gridObj);
+            cellImages.Add(sprite);
+        }
 
         SetupDungeon();
         grid.GenerateNewGrid();
@@ -82,6 +95,13 @@ public class MapGenerator : MonoBehaviour
         VisitCell(55);
 
         GenerateDungeon();
+    }
+
+    public void RevealLocation(int index, bool entered)
+    {
+        cellImages[index].color = Color.white;
+        if (entered) cellImages[index].sprite = inLoc;
+        else cellImages[index].sprite = outLoc;
     }
     void GenerateDungeon()
     {
@@ -163,11 +183,13 @@ public class MapGenerator : MonoBehaviour
             int y = cell.index / 10;
                 Vector3 position = new Vector3(x * (cellSizeX + cellGapX), 0f, y * (cellSizeY + cellGapY));
             position = position - new Vector3((cellSizeX + cellGapX) * 5, 0, (cellSizeY + cellGapY) * 5);
+            //RevealLocation(cell.index);
             if (floorPlan[cell.index + 1] == 1)
             {
                 
                 Vector3 endPos = position + new Vector3(cellSizeX/2,0,0);
                 Door door = Instantiate(doorPrefab, endPos, Quaternion.identity);
+                door.indexLocation = cell.index;
                 door.orientation = DoorOrientation.Right;
                 door.transform.Rotate(0, 90, 0);
                 door.doorEndPosition = endPos + new Vector3(cellGapX+4, 0, 0);
@@ -192,6 +214,7 @@ public class MapGenerator : MonoBehaviour
 
                 Vector3 endPos = position - new Vector3(cellSizeX / 2, 0, 0);
                 Door door = Instantiate(doorPrefab, endPos, Quaternion.identity);
+                door.indexLocation = cell.index;
                 door.orientation = DoorOrientation.Left;
                 door.transform.Rotate(0, 270, 0);
                 door.doorEndPosition = endPos - new Vector3(cellGapX + 4, 0, 0);
@@ -218,6 +241,7 @@ public class MapGenerator : MonoBehaviour
 
                 Vector3 endPos = position + new Vector3(0, 0, cellSizeY / 2);
                 Door door = Instantiate(doorPrefab, endPos, Quaternion.identity);
+                door.indexLocation = cell.index;
                 door.orientation = DoorOrientation.Up;
                 door.doorEndPosition = endPos + new Vector3(0, 0, cellGapY + 4);
                 door.roomCenter = position;
@@ -241,6 +265,7 @@ public class MapGenerator : MonoBehaviour
 
                 Vector3 endPos = position - new Vector3( 0, 0, cellSizeY / 2);
                 Door door = Instantiate(doorPrefab, endPos, Quaternion.identity);
+                door.indexLocation = cell.index;
                 door.orientation = DoorOrientation.Down;
                 door.transform.Rotate(0, 180, 0);
                 door.doorEndPosition = endPos - new Vector3(0, 0, cellGapY + 4);
@@ -259,7 +284,11 @@ public class MapGenerator : MonoBehaviour
                 spawnedAddons.Add(wall);
 
             }
-            if (cell.index == 55) cell.MakeSafe();
+            if (cell.index == 55)
+            {
+                cell.MakeSafe();
+                RevealLocation(55, true);
+            }
         }
     }
 }

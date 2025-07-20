@@ -10,6 +10,7 @@ public class KennyGameManager : MonoBehaviour
 	private EventService EventService;
 	public static KennyGameManager Instance;
 	[SerializeField] KennyPlayerController playerCon;
+	[SerializeField] MapGenerator map;
 	[SerializeField] private TextMeshProUGUI healthText, powerText;
 
 	// Components
@@ -79,7 +80,11 @@ public class KennyGameManager : MonoBehaviour
 
         }
     }
-	public void UpdateHealth(int value)
+    public void UpdateWorld(int index, bool enter)
+    {
+		map.RevealLocation(index, enter);
+    }
+    public void UpdateHealth(int value)
 	{
 		healthText.text = "Health: " + value;
 	}

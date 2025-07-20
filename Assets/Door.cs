@@ -33,19 +33,25 @@ public class Door : MonoBehaviour
             {
                 if (col.CompareTag("Player"))
                 {
+                    KennyGameManager.Instance.UpdateWorld(indexLocation, false);
                     Vector3 offset = new();
                     switch (orientation)
                     {
+                        
                         case DoorOrientation.Left:
                             offset = new Vector3(-roomDistX, 0, 0);
+                            KennyGameManager.Instance.UpdateWorld(indexLocation - 1, true);
                             break;
                         case DoorOrientation.Right:
+                            KennyGameManager.Instance.UpdateWorld(indexLocation+1, true);
                             offset = new Vector3(roomDistX, 0, 0);
                             break;
                         case DoorOrientation.Up:
+                            KennyGameManager.Instance.UpdateWorld(indexLocation + 10, true);
                             offset = new Vector3(0, 0, roomDistY);
                             break;
                         case DoorOrientation.Down:
+                            KennyGameManager.Instance.UpdateWorld(indexLocation - 10, true);
                             offset = new Vector3(0, 0, -roomDistY);
                             break;
                     }
