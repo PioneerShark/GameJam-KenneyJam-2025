@@ -20,21 +20,9 @@ public class KennyGameManager : MonoBehaviour
 {
 	// Services
 	private EventService EventService;
-<<<<<<< Updated upstream
-=======
 
 	// Components
 	private CameraComponent _CameraComponent;
-
-	// Variables
-	public static KennyGameManager Instance;
-	[SerializeField] KennyPlayerController playerCon;
-	[SerializeField] private TextMeshProUGUI healthText, powerText;
->>>>>>> Stashed changes
-
-	[SerializeField] private AudioClip[] audioClips;
-	[SerializeField] private AudioClip musicClip;
-	[SerializeField] private AudioSource musicPlayer;
 
 	// Variables
 	public static KennyGameManager Instance;
@@ -200,7 +188,6 @@ public class KennyGameManager : MonoBehaviour
 				break;
 
 <<<<<<< Updated upstream
-<<<<<<< Updated upstream
         }
     }
     public void UpdateWorld(int index, bool enter)
@@ -209,8 +196,6 @@ public class KennyGameManager : MonoBehaviour
     }
     public void UpdateHealth(int value)
 =======
-=======
->>>>>>> Stashed changes
 		}
 	}
 	public void UpdateHealth(int value)
