@@ -9,6 +9,8 @@ using static Framework;
 
 public class KennyPlayerController : MonoBehaviour
 {
+
+    int power = 0;
     // Services
     private InputService InputService;
 
@@ -188,5 +190,15 @@ public class KennyPlayerController : MonoBehaviour
         {
             _WeaponComponent.AttackCancelled(false);
         }
+    }
+    public void UpdatePower(int value)
+    {
+        power = value;
+        _WeaponComponent.UpdatePower(power);
+
+    }
+    public int GetHealth()
+    {
+        return GetHealth();
     }
 }

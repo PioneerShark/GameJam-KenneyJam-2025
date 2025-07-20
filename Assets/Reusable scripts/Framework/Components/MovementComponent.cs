@@ -10,6 +10,8 @@ using static UnityEngine.ParticleSystem;
 public class MovementComponent : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 5f;
+    private float moveSpeedInitial;
+
     //
     //float dashMultiplier = 2f;
     float dashStartTime;
@@ -33,7 +35,7 @@ public class MovementComponent : MonoBehaviour
     private void Awake()
     {
         //collisionMask = LayerMask.GetMask("Wall");
-        
+        moveSpeedInitial = moveSpeed;
         Collider[] colliders = gameObject.GetComponents<Collider>();
         foreach (Collider collider in colliders)
         {
@@ -177,5 +179,9 @@ public class MovementComponent : MonoBehaviour
         vel = new Vector3(vel.x, vel.y, vel.z);
         if (bounced) return resultant+vel;
         else return vel;
+    }
+    public void UpdatePower(int value)
+    {
+        moveSpeed = moveSpeedInitial + (value+1/ 200f);
     }
 }

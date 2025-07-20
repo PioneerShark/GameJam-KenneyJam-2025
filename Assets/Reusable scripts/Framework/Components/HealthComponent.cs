@@ -1,8 +1,11 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using static Framework;
+using static UnityEngine.Rendering.DebugUI;
 
 public class HealthComponent : MonoBehaviour
 {
@@ -34,6 +37,13 @@ public class HealthComponent : MonoBehaviour
         spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
         InitialiseMaterials();
     }
+    private void Start()
+    {
+        if (gameObject.CompareTag("Player"))
+        {
+            KennyGameManager.Instance.UpdateHealth((int)healthCurrent);
+        }
+    }
 
     public void TakeDamage(int value) {
         healthCurrent -= value;
@@ -42,6 +52,15 @@ public class HealthComponent : MonoBehaviour
         {
             Die();
         }
+        if (gameObject.CompareTag("Player"))
+        {
+            KennyGameManager.Instance.UpdateHealth((int)healthCurrent);
+        }
+    }
+    public void SetMaxHealth(int value)
+    {
+        healthMax = value;
+        healthCurrent = value;
     }
 
     public void Heal(int value)
@@ -68,7 +87,11 @@ public class HealthComponent : MonoBehaviour
         {
             EventService.Fire("AddPower");
         }
-        Destroy(this.gameObject);
+        else
+        {
+            ToMainMenu();
+        }
+            Destroy(this.gameObject);
     }
 
     public void AssignDeathEvent(UnityAction<Room> deathEvent, Room newRoomID){
@@ -125,5 +148,10 @@ public class HealthComponent : MonoBehaviour
             materials[i].SetFloat("_FlashValue", value);
         }
     }
-
+    async UniTask ToMainMenu()
+    {
+        await UniTask.Yield();
+        await UniTask.Delay(3000);
+        SceneManager.LoadScene("MainMenu");
+    }
 }

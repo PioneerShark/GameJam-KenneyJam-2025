@@ -159,7 +159,6 @@ public class MapGenerator : MonoBehaviour
         
         foreach (RoomSpawns cell in spawnedCells)
         {
-            Debug.Log(cell.index);
             int x = cell.index % 10;
             int y = cell.index / 10;
                 Vector3 position = new Vector3(x * (cellSizeX + cellGapX), 0f, y * (cellSizeY + cellGapY));

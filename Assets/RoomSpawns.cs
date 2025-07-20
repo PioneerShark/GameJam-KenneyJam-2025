@@ -68,13 +68,22 @@ public class RoomSpawns : MonoBehaviour
     private async UniTask HandleWave()
     {
         roomStatus = RoomStatus.InProgress;
+        int enemyCountScaleMin = KennyGameManager.Instance.GetPower() / 500;
+        int enemyCountScale = KennyGameManager.Instance.GetPower() / 300;
+        int waveScale = KennyGameManager.Instance.GetPower() / 500;
+        int trueWaveCount = Random.Range(waveCount, waveCount + waveScale);
         for (int i = 0; i < waveCount; i++)
         {
-            int enemyCount = Random.Range(enemyCountMin, enemyCountMax+1);
+            
+            int enemyCount = Random.Range(enemyCountMin+enemyCountScaleMin, enemyCountMax+1+ enemyCountScale);
             for (int j = 0; j < enemyCount; j++)
             {
                 await UniTask.Delay((int)(spawnDelay * 1000f));
                 HealthComponent enemy = Instantiate(enemyType, spawnLocations[Random.Range(0, spawnLocations.Count)]);
+                int healthValue = (KennyGameManager.Instance.GetPower()+150)/150;
+                Debug.Log(healthValue);
+                enemy.SetMaxHealth(healthValue);
+                
                 spawnedEnemies.Add(enemy);
             }
             await UniTask.Delay((int)(waveDuration * 1000f));

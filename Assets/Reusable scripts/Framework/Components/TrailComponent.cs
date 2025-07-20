@@ -7,9 +7,9 @@ using System;
 [RequireComponent(typeof(LineRenderer))]
 public class TrailComponent : MonoBehaviour
 {
-    public LineRenderer lineRenderer;
+    [HideInInspector] public LineRenderer lineRenderer;
     int maxSegments = 1000;
-    float pointLifeSpan = 0.5f;
+    float pointLifeSpan = 0.1f;
     
     List<linePoint> points = new List<linePoint>();
     
@@ -24,6 +24,7 @@ public class TrailComponent : MonoBehaviour
     {
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.sortingOrder = 30;
+        pointLifeSpan = 0.1f;
         //maxSegments *= 3;
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -34,13 +35,16 @@ public class TrailComponent : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        for(int i = 0; i<points.Count; i++)
+        List<linePoint> lines = new();
+        for (int i = 0; i<points.Count; i++)
         {
-            if (Time.time - points[i].creationTime > pointLifeSpan)
+            float time = Time.time - points[i].creationTime;            
+            if (time < pointLifeSpan)
             {
-                points.RemoveAt(i);
+                lines.Add(points[i]);
             }
         }
+        points = lines;
         UpdateLines();
 
     }

@@ -9,7 +9,7 @@ public class Projectile : MonoBehaviour
 {
     [HideInInspector]
     ProjectileType projectileType;
-    BounceType bounceType = BounceType.Default;
+    BounceType bounceType = BounceType.BounceOffTargets;
     Vector3 direction;
     public bool isHoming = false;
     
@@ -51,6 +51,7 @@ public class Projectile : MonoBehaviour
         this.damage = damage;
         angle = Mathf.Atan2(direction.z, direction.x) * (180 / Mathf.PI);
         sprite.transform.eulerAngles = new Vector3(0, transform.rotation.y, angle);
+
     }
     public void ProjectileStats(Vector3 direction, float speed, int damage, float lifeSpan, LayerMask targetMask)
     {
@@ -94,8 +95,8 @@ public class Projectile : MonoBehaviour
     void Start()
     {
         lastHitTime = Time.time;
-        line.AppendLineVertex(transform.position);
         line.ClearLines();
+        line.AppendLineVertex(transform.position);
     }
 
     // Update is called once per frame
@@ -118,7 +119,7 @@ public class Projectile : MonoBehaviour
             TurnTowardsTarget();
         }
         Vector3 velocity = speed * Time.deltaTime * direction.normalized;
-        if (active) 
+        if (active && velocity.sqrMagnitude>0) 
         {
             line.AppendLineVertex(transform.position);
             
@@ -180,11 +181,13 @@ public class Projectile : MonoBehaviour
                             //transform.position = AlignWithAttackPlane(hit.collider.transform.position);
                             bounces--;
                             transform.position = hit.point;
-                            DisableProjectile();
-                            transform.position = AlignWithAttackPlane(hit.transform.position);
+                            
+                            //transform.position = AlignWithAttackPlane(hit.transform.position);
                             BounceOffTarget();
                             Projectile pro = ProjectileSpawner.Instance.SpawnProjectile(gameObject, projectileType, transform.position);
                             pro.ProjectileStats(direction, speed, damage, bounces, penetrations, lifeSpan, gameObject.layer);
+                            DisableProjectile();
+                            
                             
                             pro.gameObject.SetActive(true);
                             
@@ -239,7 +242,7 @@ public class Projectile : MonoBehaviour
         {
             bounces--;
             direction = Vector3.Reflect(direction, hit.normal);
-            if (bounceType == BounceType.BounceTowardsTargets || bounceType == BounceType.BounceOffTargets)
+            if (bounceType == BounceType.BounceTowardsTargets)
             {
                 BounceToNearbyTarget();
             }
@@ -327,6 +330,7 @@ public class Projectile : MonoBehaviour
                 line.ClearLines();
                 active = true;
                 sprite.SetActive(true);
+                model.SetActive(true);
                 lastTargetHit = null;
                 PoolService.Release<Projectile>(this, projectileType.ToString());
                 break;

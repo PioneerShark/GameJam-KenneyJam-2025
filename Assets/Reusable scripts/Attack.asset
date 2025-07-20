@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dce9d684fcdbac48bf96d066ae9b6f3, type: 3}
   m_Name: Attack
   m_EditorClassIdentifier: 
-  attackSpeed: 0.1
+  attackSpeed: 0.4
   attackAmmoComsumption: 1
   damage: 1
   spreadAngleDeg: 0
@@ -25,5 +25,5 @@ MonoBehaviour:
   projectile: 0
   penetrations: 0
   bounces: 0
-  projectileSpeed: 50
+  projectileSpeed: 25
   projectileLifespan: 5

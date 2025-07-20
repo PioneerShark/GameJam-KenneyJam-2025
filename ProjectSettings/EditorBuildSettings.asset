@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/WorldGen V2.unity
     guid: a53e7e5edc987074397e15d84a95ec8e
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 4ec43e9261b8aff43b37e957c1d6651c
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

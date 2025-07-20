@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Net;
+using Unity.Burst.Intrinsics;
 
 public class WeaponComponent : MonoBehaviour
 {
@@ -10,6 +12,9 @@ public class WeaponComponent : MonoBehaviour
 
     private Transform attackSpawn;
     private Weapon currentWeapon;
+    private int power;
+    bool v2, v3, v4, v5 = false;
+
 
     [SerializeField] private List<Weapon> weapons;
 
@@ -122,6 +127,12 @@ public class WeaponComponent : MonoBehaviour
         }
         InitialiseWeaponStats();
     }
+
+    public void SwapWeapon(int weapon)
+    {
+        currentWeapon = weapons[weapon];
+        InitialiseWeaponStats();
+    }
     private void InitialiseWeaponStats()
     {
 
@@ -139,6 +150,49 @@ public class WeaponComponent : MonoBehaviour
     public Weapon GetCurrentWeapon()
     {
         return currentWeapon;
+    }
+
+    public void UpdatePower(int value)
+    {
+        power = value;
+        switch (power)
+        {
+            case > 1000:
+                if (!v5) {
+                    AttackCancelled(true);
+                    v5 = true;
+                    AttackCancelled(true);
+                    SwapWeapon(4);
+                }
+                else
+                {
+                    currentWeapon.primaryFire.damage = (value/250);
+                }
+
+                break;
+            case > 800:
+                if (v4) return;
+                v4 = true;
+                AttackCancelled(true);
+                SwapWeapon(3);
+                AttackCancelled(false);
+                break;
+            case > 600:
+                if (v3) return;
+                v3 = true;
+                AttackCancelled(true);
+                SwapWeapon(2);
+                AttackCancelled(false);
+                break;
+            case > 200:
+                if (v2) return;
+                v2 = true;
+                AttackCancelled(true);
+                SwapWeapon(1);
+                AttackCancelled(false);
+                break;
+        };
+            
     }
 }
 
