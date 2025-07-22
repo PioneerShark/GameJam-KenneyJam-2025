@@ -38,15 +38,22 @@ public class InputService : MonoBehaviour, IFrameworkService
 
     public void Disconnect(string actionPath, System.Action<InputAction.CallbackContext> callback)
     {
-        InputAction action = _playerInput.actions[actionPath];
-        if (action == null)
+        if (_playerInput != null)
         {
-            throw new ArgumentException($"'{actionPath}' does not exist in '{_inputActionAsset.name}'.");
-        }
+            InputAction action = _playerInput.actions[actionPath];
+            if (action == null)
+            {
+                throw new ArgumentException($"'{actionPath}' does not exist in '{_inputActionAsset.name}'.");
+            }
 
-        action.performed -= callback;
-        action.canceled -= callback;
-        action.Disable();
+            action.performed -= callback;
+            action.canceled -= callback;
+            action.Disable();
+        }
+        else
+        {
+            
+        }
     }
 
     public void Disconnect(string actionName, string mapName, System.Action<InputAction.CallbackContext> callback) 

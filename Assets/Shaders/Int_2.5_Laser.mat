@@ -56,7 +56,7 @@ Material:
     m_Floats:
     - _LaserScale: 1
     - _LaserSharpness: 13.5
-    - _LaserThickness: 50
+    - _LaserThickness: 10
     m_Colors:
     - _Color: {r: 1.4980394, g: 1.4980394, b: 1.4980394, a: 1}
     - _LaserSpeed: {r: 0, g: 0, b: 0, a: 0}

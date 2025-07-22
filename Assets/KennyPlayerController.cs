@@ -13,6 +13,7 @@ public class KennyPlayerController : MonoBehaviour
     int power = 0;
     // Services
     private InputService InputService;
+    private EventService EventService;
 
     // Components
     protected CameraComponent _CameraComponent;
@@ -24,7 +25,8 @@ public class KennyPlayerController : MonoBehaviour
     [SerializeField] protected Animator _Animator;
 
     // Variables
-    [SerializeField] protected Transform _lookAtTransform;
+    [SerializeField] protected Transform _aimTransform;
+    [SerializeField] protected Transform _mouseTransform;
     protected Vector2 _lookVector2 = Vector2.up;
     protected Vector2 _moveVector = Vector2.zero;
     protected Vector2 _directionVector = Vector2.zero;
@@ -33,8 +35,10 @@ public class KennyPlayerController : MonoBehaviour
 
     private Vector2 _currentMousePosition = Vector2.zero;
     private Vector2 _lastMovementInput = Vector2.zero;
+    private bool _lastCombatStatus = false;
     [SerializeField] private float rotationSpeed = 8f;
     [SerializeField] private float animationTransitionSpeed = 8f;
+    [SerializeField] private float _aimSmoothSpeed = 10f;
 
     private Dictionary<Vector2, float> _moveVectorMap = new Dictionary<Vector2, float>()
     {
@@ -64,6 +68,7 @@ public class KennyPlayerController : MonoBehaviour
     protected void Awake()
     {
         InputService = Game.GetService<InputService>();
+        EventService = Game.GetService<EventService>();
 
         TryGetComponent<CameraComponent>(out _CameraComponent);
         TryGetComponent<MovementComponent>(out _MovementComponent);
@@ -89,11 +94,43 @@ public class KennyPlayerController : MonoBehaviour
         _WeaponComponent.SetAttackSpawn(_attackSpawn);
     }
 
+    protected void Start()
+    {
+        EventService.Fire("CombatStatus", _lastCombatStatus);
+    }
+
     protected void Update()
     {
+        GameObject firstEnemyFound = GameObject.FindGameObjectWithTag("Enemy");
+        if (firstEnemyFound != null && _lastCombatStatus == false)
+        {
+            _lastCombatStatus = true;
+            EventService.Fire("CombatStatus", _lastCombatStatus);
+        }
+        else if (firstEnemyFound == null && _lastCombatStatus == true)
+        {
+            _lastCombatStatus = false;
+            EventService.Fire("CombatStatus", _lastCombatStatus);
+        }
+
+
         Vector3 worldMousePosition = _ScreenToPlaneComponent.ScreenToPlane(_currentMousePosition);
-        Vector3 lookVector3 = worldMousePosition - new Vector3(transform.position.x, worldMousePosition.y, transform.position.z);
-        Vector3 attackVector3 = worldMousePosition - new Vector3(_attackSpawn.position.x, worldMousePosition.y, _attackSpawn.position.z);
+        Vector3 rawDirection = worldMousePosition - new Vector3(transform.position.x, worldMousePosition.y, transform.position.z);
+
+        if (rawDirection.magnitude < 2)
+        {
+            Vector3 correctedPosition = new Vector3(transform.position.x, worldMousePosition.y, transform.position.z) + (rawDirection.normalized * 2);
+            _aimTransform.position = Vector3.Lerp(_aimTransform.position, correctedPosition, _aimSmoothSpeed * Time.deltaTime);
+        }
+        else
+        {
+            _aimTransform.position = Vector3.Lerp(_aimTransform.position, worldMousePosition, _aimSmoothSpeed * Time.deltaTime);
+        }
+
+        _mouseTransform.position = worldMousePosition;
+
+        Vector3 lookVector3 = _aimTransform.position - new Vector3(transform.position.x, _aimTransform.position.y, transform.position.z);
+        Vector3 attackVector3 = _aimTransform.position - new Vector3(_attackSpawn.position.x, _aimTransform.position.y, _attackSpawn.position.z);
         _lookVector2 = new Vector2(lookVector3.x, lookVector3.z);
         Quaternion characterRotation = Quaternion.LookRotation(lookVector3.normalized);
         _attackSpawn.position = new Vector3(_attackSpawn.position.x, 1, _attackSpawn.position.z);
@@ -133,15 +170,6 @@ public class KennyPlayerController : MonoBehaviour
             _Animator.SetFloat("MoveZ", Mathf.Lerp(_Animator.GetFloat("MoveZ"), 0, Time.deltaTime * animationTransitionSpeed));
         }
 
-        if (lookVector3.magnitude < 2)
-        {
-            _lookAtTransform.position = new Vector3(transform.position.x, worldMousePosition.y, transform.position.z) + (lookVector3.normalized * 2);
-        }
-        else
-        {
-            _lookAtTransform.position = worldMousePosition;
-        }
-
         _CameraComponent.PanTowards(worldMousePosition);
         _WeaponComponent.SetAttackDirecton(new Vector2(attackVector3.x, attackVector3.z));
     }
@@ -165,7 +193,7 @@ public class KennyPlayerController : MonoBehaviour
 
     void Attack(InputAction.CallbackContext context)
     {
-       if (context.performed)
+        if (context.performed)
         {
             _WeaponComponent.AttackStarted(true);
         }
@@ -201,5 +229,15 @@ public class KennyPlayerController : MonoBehaviour
     public int GetHealth()
     {
         return GetHealth();
+    }
+
+    void OnDestroy()
+    {
+        // Cleanup
+        InputService.Disconnect("Move", "Gameplay", Move);
+        InputService.Disconnect("Fire", "Gameplay", Attack);
+        InputService.Disconnect("FireSecondary", "Gameplay", AttackSecondary);
+        InputService.Disconnect("Look", "Gameplay", LookMouse);
+        InputService.Disconnect("Reload", "Gameplay", Reload);
     }
 }

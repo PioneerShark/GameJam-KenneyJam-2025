@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - AttackPlane
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - Enemy
   - Mouse
   - Door
-  - 
+  - MouseUI
   - 
   - 
   - 

@@ -1,6 +1,8 @@
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static Framework;
 
 public class RoomSpawns : MonoBehaviour
@@ -12,13 +14,19 @@ public class RoomSpawns : MonoBehaviour
     [SerializeField] float waveDuration;
     [SerializeField] float spawnDelay;
     public List<Transform> spawnLocations;
+    public List<Light> lights;
     [HideInInspector] public List<Door> doors;
     private List<HealthComponent> spawnedEnemies;
     [HideInInspector] public int index;
     [HideInInspector] public int value;
     public RoomStatus roomStatus;
-    private bool running = false;
+    //private bool running = false;
     private EventService EventService;
+
+    private CancellationTokenSource _ownerSceneTokenSource;
+    public CancellationToken ownerSceneToken => _ownerSceneTokenSource.Token;
+    private Scene _ownerScene;
+
     private void Awake()
     {
         EventService = Game.GetService<EventService>();
@@ -26,21 +34,33 @@ public class RoomSpawns : MonoBehaviour
         spawnedEnemies = new();
         spawnLocations = new();
         doors = new();
+
+        _ownerScene = SceneManager.GetActiveScene();
+        _ownerSceneTokenSource = new CancellationTokenSource();
+
+        SceneManager.sceneUnloaded += OnSceneUnloaded;
+    }
+
+    public void SetLights(bool setActive)
+    {
+        foreach (Light light in lights)
+        {
+            light.enabled = setActive;
+        }
     }
 
     private void Update()
     {
-        switch (roomStatus) {
+        switch (roomStatus)
+        {
             case RoomStatus.Primed:
-                EventService.Fire("CombatStatus", true);
                 ShutDoors();
-                HandleWave();
+                _ = HandleWave(ownerSceneToken);
                 break;
             case RoomStatus.Inactive:
                 CheckCollisions();
                 break;
             case RoomStatus.Completed:
-                EventService.Fire("CombatStatus", false);
                 List<HealthComponent> tempSpawned = new();
                 for (int i = 0; i < spawnedEnemies.Count; i++)
                 {
@@ -69,7 +89,8 @@ public class RoomSpawns : MonoBehaviour
 
         }
     }
-    private async UniTask HandleWave()
+
+    private async UniTask HandleWave(CancellationToken token)
     {
         roomStatus = RoomStatus.InProgress;
         int enemyCountScaleMin = KennyGameManager.Instance.GetPower() / 500;
@@ -78,21 +99,22 @@ public class RoomSpawns : MonoBehaviour
         int trueWaveCount = Random.Range(waveCount, waveCount + waveScale);
         for (int i = 0; i < waveCount; i++)
         {
-            
-            int enemyCount = Random.Range(enemyCountMin+enemyCountScaleMin, enemyCountMax+1+ enemyCountScale);
+
+            int enemyCount = Random.Range(enemyCountMin + enemyCountScaleMin, enemyCountMax + 1 + enemyCountScale);
             for (int j = 0; j < enemyCount; j++)
             {
-                await UniTask.Delay((int)(spawnDelay * 1000f));
+                await UniTask.Delay((int)(spawnDelay * 1000f), cancellationToken: token);
+                token.ThrowIfCancellationRequested();
                 HealthComponent enemy = Instantiate(enemyType, spawnLocations[Random.Range(0, spawnLocations.Count)]);
-                int healthValue = (KennyGameManager.Instance.GetPower()+100)/100;
-                Debug.Log(healthValue);
+                int healthValue = (KennyGameManager.Instance.GetPower() + 100) / 100;
                 enemy.SetMaxHealth(healthValue);
-                
                 spawnedEnemies.Add(enemy);
             }
-            await UniTask.Delay((int)(waveDuration * 1000f));
+
+            //Debug.Log($"Spawned {enemyCount} enemies in Scene: {SceneManager.GetActiveScene().name}");
+            await UniTask.Delay((int)(waveDuration * 1000f), cancellationToken: token);
         }
-        await UniTask.Yield();
+        await UniTask.Yield(PlayerLoopTiming.Update, token);
         roomStatus = RoomStatus.Completed;
     }
 
@@ -104,11 +126,12 @@ public class RoomSpawns : MonoBehaviour
 
     private void EndWaves()
     {
-        foreach (Door door  in doors)
+        foreach (Door door in doors)
         {
             door.active = true;
         }
     }
+
     private void ShutDoors()
     {
         foreach (Door door in doors)
@@ -116,6 +139,7 @@ public class RoomSpawns : MonoBehaviour
             door.active = false;
         }
     }
+
     private void CheckCollisions()
     {
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20f);
@@ -128,4 +152,19 @@ public class RoomSpawns : MonoBehaviour
         }
     }
 
+    private void OnSceneUnloaded(Scene scene)
+    {
+        if (scene == _ownerScene)
+        {
+            _ownerSceneTokenSource.Cancel();
+            _ownerSceneTokenSource.Dispose();
+        }
+    }
+
+    private void Oestroy()
+    {
+        _ownerSceneTokenSource?.Cancel();
+        _ownerSceneTokenSource?.Dispose();
+        SceneManager.sceneUnloaded -= OnSceneUnloaded;
+    }
 }

@@ -96,7 +96,7 @@ public class HealthComponent : MonoBehaviour
         }
         else
         {
-            ToMainMenu();
+            _ = ToMainMenu();
         }
             Destroy(this.gameObject);
     }
@@ -124,7 +124,7 @@ public class HealthComponent : MonoBehaviour
         float maxFlashValue = Mathf.Min(1f, (float)(damage / maxDamageFlashThreshold));
         float flashTime = maxFlashValue * maxFlashTime;
         float currentFlashValue = 0f;
-        Debug.Log("damage Taken(Enumerator");
+        //Debug.Log("damage Taken(Enumerator");
         SetFlashColour();
         
         float elapsedTime = 0f;

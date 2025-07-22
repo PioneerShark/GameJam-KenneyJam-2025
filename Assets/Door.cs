@@ -13,6 +13,7 @@ public class Door : MonoBehaviour
     public Vector3 roomCenter;
     public float roomDistX;
     public float roomDistY;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
@@ -23,7 +24,7 @@ public class Door : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (active)
         {
@@ -43,7 +44,7 @@ public class Door : MonoBehaviour
                             KennyGameManager.Instance.UpdateWorld(indexLocation - 1, true);
                             break;
                         case DoorOrientation.Right:
-                            KennyGameManager.Instance.UpdateWorld(indexLocation+1, true);
+                            KennyGameManager.Instance.UpdateWorld(indexLocation + 1, true);
                             offset = new Vector3(roomDistX, 0, 0);
                             break;
                         case DoorOrientation.Up:
@@ -57,7 +58,7 @@ public class Door : MonoBehaviour
                     }
                     Vector3 pos = roomCenter + offset;
                     EventService.Fire("SetCameraPosition", pos);
-                    col.transform.position = doorEndPosition;
+                    EventService.Fire("TeleportPlayer", doorEndPosition);
                 }
             }
         }

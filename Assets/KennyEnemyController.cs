@@ -119,19 +119,20 @@ public class KennyEnemyController : MonoBehaviour
 
     protected void Update()
     {
-        if (_target == null) return;
+        if (_target != null)
+        {
+            _currentTargetPosition = _target.position;
 
-        _currentTargetPosition = _target.position;
+            if (!((transform.position - _target.position).sqrMagnitude > moveTowardsAcceptanceRange))
+            {
+                _ = TryAttack();
+            }
+        }
 
         Vector3 worldTargetPosition = new Vector3(_currentTargetPosition.x, 1, _currentTargetPosition.z);
         Vector3 lookVector3 = worldTargetPosition - new Vector3(transform.position.x, 1, transform.position.z);
         _lookVector2 = new Vector2(lookVector3.x, lookVector3.z);
         _lookVector2Lerped = Vector2.Lerp(_lookVector2Lerped, _lookVector2, Time.deltaTime * _shuffleSpeed);
-
-        if (!((transform.position - _target.position).sqrMagnitude > moveTowardsAcceptanceRange))
-        {
-            _ = TryAttack();
-        }
 
         _Animator.SetLayerWeight(2, Mathf.Lerp(_Animator.GetLayerWeight(2), _animationWeights["WholeBody"], Time.deltaTime * _animationTransitionSpeed));
         _KennyKinematicComponent.LerpRigConstraintWeight(_animationWeights["IK"], Time.deltaTime * _animationTransitionSpeed);
@@ -197,10 +198,10 @@ public class KennyEnemyController : MonoBehaviour
 
     protected virtual async UniTask TryAttack()
     {
-        Debug.Log("Attack Attempted");
+        //Debug.Log("Attack Attempted");
         if (Time.time - lastAttackTime < attackSpeed) return;
 
-        Debug.Log("Swinging");
+        //Debug.Log("Swinging");
         lastAttackTime = Time.time;
         int attackValue = UnityEngine.Random.Range(0, 4);
         while (attackValue == lastAttackValue)
@@ -221,10 +222,12 @@ public class KennyEnemyController : MonoBehaviour
         await UniTask.Delay(350);
 
         // Melee attack, sphere cast
-        if (Vector3.Distance(transform.position, _target.position) < 5f)
+        if (_target != null)
         {
-            _target.GetComponent<HealthComponent>().TakeDamage(1);
-            //EventService.Fire("PlaySFX", new PlaySFXInfo("PlayerHurt", _target.position));
+            if (Vector3.Distance(transform.position, _target.position) < 5f)
+            {
+                _target.GetComponent<HealthComponent>().TakeDamage(1);
+            }
         }
 
         await UniTask.Delay(300);

@@ -58,7 +58,7 @@ public class MapGenerator : MonoBehaviour
         }
 
         SetupDungeon();
-        grid.GenerateNewGrid();
+        _ = grid.GenerateNewGrid();
 
     }
     private void Update()
@@ -68,7 +68,7 @@ public class MapGenerator : MonoBehaviour
             reset = false;
             SetupDungeon();
 
-            grid.GenerateNewGrid();
+            _ = grid.GenerateNewGrid();
 
         }
     }
@@ -102,6 +102,13 @@ public class MapGenerator : MonoBehaviour
         cellImages[index].color = Color.white;
         if (entered) cellImages[index].sprite = inLoc;
         else cellImages[index].sprite = outLoc;
+        foreach (RoomSpawns cell in spawnedCells)
+        {
+            if (index == cell.index)
+            {
+                cell.SetLights(entered);
+            }
+        }
     }
     void GenerateDungeon()
     {

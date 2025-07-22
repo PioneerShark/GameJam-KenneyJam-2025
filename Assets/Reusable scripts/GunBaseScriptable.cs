@@ -18,7 +18,7 @@ public class GunBaseScriptable : AttackScriptable
     public override void AttackStart(GameObject parent)
     {
         isAttacking = true;
-        TryAttack(parent);
+        _ = TryAttack(parent);
     }
     
     public override void AttackUpdate(GameObject parent)

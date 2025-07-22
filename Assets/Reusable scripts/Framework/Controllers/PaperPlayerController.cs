@@ -20,7 +20,7 @@ public class PaperPlayerController : PaperCharacterController
     private Vector2 _currentGamepadVector = Vector2.zero;
     private Vector2 _lastMovementInput = Vector2.zero;
     [SerializeField] private float _panningDeadzone = 5f;
-    private bool lerping = false;
+    //private bool lerping = false;
     private bool mouseVector = true;
     [SerializeField]
     private AnimationCurve rollCurve;
@@ -88,7 +88,7 @@ public class PaperPlayerController : PaperCharacterController
         else
         {
             //_AnimationComponent.SetFloat("WalkSpeed", 1f);
-            LerpMovement(1f, _lastMovementInput.magnitude);
+            _ = LerpMovement(1f, _lastMovementInput.magnitude);
             _AnimationComponent.SetBool("Moving", false);
 
         }
@@ -114,7 +114,7 @@ public class PaperPlayerController : PaperCharacterController
         if (context.performed)
         {
             
-            _MovementComponent.Dash(_lastMovementInput, 10f, 0.5f, rollCurve);
+            _ = _MovementComponent.Dash(_lastMovementInput, 10f, 0.5f, rollCurve);
         }
     }
     void SwapWeapon(InputAction.CallbackContext context)

@@ -4,7 +4,7 @@ public class AnimationComponent : MonoBehaviour
 {
     [SerializeField]
     Animator animator;
-    AnimationClip currentAnimation;
+    //AnimationClip currentAnimation;
 
 
     public void SetBool(string boolName, bool value)
@@ -25,7 +25,7 @@ public class AnimationComponent : MonoBehaviour
         animator.SetFloat("SpeedMult", speedMult);
         animator.Play(animationName);
         animator.SetFloat("SpeedMult", 1f);
-        currentAnimation = null;
+        //currentAnimation = null;
     }
     public void PlayAnimation(string animationName, float speedMult, bool reverse)
     {

@@ -1,8 +1,7 @@
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using static Framework;
-using static UnityEngine.Rendering.DebugUI;
+using Cysharp.Threading.Tasks;
 
 struct PlaySFXInfo
 {
@@ -23,16 +22,32 @@ public class KennyGameManager : MonoBehaviour
 
 	// Components
 	private CameraComponent _CameraComponent;
+	private AudioLowPassFilter _AudioLowPassFilter;
 
 	// Variables
 	public static KennyGameManager Instance;
-	[SerializeField] KennyPlayerController playerCon;
-	[SerializeField] MapGenerator map;
+	[SerializeField] private KennyPlayerController _playerController;
+	[SerializeField] private MapGenerator _mapGenerator;
 	[SerializeField] private TextMeshProUGUI healthText, powerText;
 
 	[SerializeField] private AudioClip[] audioClips;
-	[SerializeField] private AudioClip musicClip;
-	[SerializeField] private AudioSource musicPlayer;
+	[SerializeField] private AudioSource musicPlayerMelodic;
+	[SerializeField] private AudioSource musicPlayerPercussion;
+	[SerializeField] private bool lowPassCutoffFrequency = true;
+	[SerializeField] private float lowPassCutoffFrequencyMax = 22000f;
+	[SerializeField] private float lowPassCutoffFrequencyMin = 2000f;
+	[SerializeField] private float lowPassCutoffFrequencyLoseSpeed = 1.5f;
+	[SerializeField] private float lowPassCutoffFrequencyGainSpeed = 0.5f;
+	[SerializeField] private float lowPassCutoffFrequencyLoseDelay = 1.25f;
+	[SerializeField] private float lowPassCutoffFrequencyGainDelay = 0.5f;
+	[SerializeField] private float volumeMax = 0.333f;
+	[SerializeField] private float volumeLoseSpeed = 0.5f;
+	[SerializeField] private float volumeGainSpeed = 0.5f;
+
+	private int loopLengthMelodic;
+	private int loopPositionMelodic;
+	private int loopPositionPercussion;
+	private int sampleStart = 0; //(int) (5953500 * 0.25f);
 
 	int power = 0;
 
@@ -46,27 +61,103 @@ public class KennyGameManager : MonoBehaviour
 		{
 			Instance = this;
 		}
+
 		EventService = Game.GetService<EventService>();
 		TryGetComponent<CameraComponent>(out _CameraComponent);
-		TryGetComponent<AudioSource>(out musicPlayer);
+		TryGetComponent<AudioLowPassFilter>(out _AudioLowPassFilter);
 
+		// Events
 		EventService.Connect("SetCameraPosition", OnSetCameraPosition);
 		EventService.Connect("AddPower", AddPower);
 		EventService.Connect("CombatStatus", CombatStatus);
+		EventService.Connect("TeleportPlayer", OnTeleportPlayer);
+		EventService.Connect("PlaySFX", OnPlaySFX);
+
 		powerText.text = "Power: " + power;
 
-		// Audio Events
-		EventService.Connect("PlaySFX", OnPlaySFX);
+		Cursor.visible = false;
 	}
 
 	void Start()
 	{
 		EventService.Fire("SetCameraPosition", Vector3.zero);
 
-		if (musicClip != null)
+		loopLengthMelodic = musicPlayerMelodic.clip.samples;
+
+		OSTMatchPitch();
+		_ = TryOSTPlay();
+		musicPlayerMelodic.timeSamples = sampleStart;
+		musicPlayerPercussion.timeSamples = sampleStart;
+
+		if (_playerController == null)
 		{
-			musicPlayer.clip = musicClip;
-			musicPlayer.Play();
+			GameObject.FindGameObjectWithTag("Player").TryGetComponent<KennyPlayerController>(out _playerController);
+		}
+	}
+
+	void Update()
+	{
+		musicPlayerMelodic.volume = Mathf.Lerp(musicPlayerMelodic.volume, volumeMax, volumeGainSpeed * Time.deltaTime);
+
+		if (lowPassCutoffFrequency)
+		{
+			// In Combat
+			_AudioLowPassFilter.cutoffFrequency = Mathf.Lerp(_AudioLowPassFilter.cutoffFrequency, lowPassCutoffFrequencyMax, lowPassCutoffFrequencyGainSpeed * Time.deltaTime);
+			musicPlayerPercussion.volume = Mathf.Lerp(musicPlayerPercussion.volume, volumeMax, volumeGainSpeed * Time.deltaTime);
+		}
+		else
+		{
+			// Out of Combat
+			_AudioLowPassFilter.cutoffFrequency = Mathf.Lerp(_AudioLowPassFilter.cutoffFrequency, lowPassCutoffFrequencyMin, lowPassCutoffFrequencyLoseSpeed * Time.deltaTime);
+			musicPlayerPercussion.volume = Mathf.Lerp(musicPlayerPercussion.volume, 0, volumeLoseSpeed * Time.deltaTime);
+		}
+
+		OSTMatchPitch();
+
+		int melodicSamples = musicPlayerMelodic.timeSamples;
+		int percussionSamples = musicPlayerPercussion.timeSamples;
+
+		loopPositionMelodic = melodicSamples;
+		loopPositionPercussion = percussionSamples;
+
+		// Check if the melodic loop has completed
+		if (loopPositionMelodic == 0)
+		{
+			musicPlayerPercussion.timeSamples = 0;
+		}
+
+		// Update pitch
+		OSTMatchPitch();
+	}
+
+	async UniTask TryOSTPlay(int maxAttempts = 64)
+	{
+		int currentAttempts = 0;
+		while ((musicPlayerMelodic.isPlaying == false || musicPlayerPercussion.isPlaying == false) && currentAttempts <= maxAttempts)
+		{
+			//Debug.Log("Trying to play OST!");
+			currentAttempts++;
+			musicPlayerMelodic.Play();
+			musicPlayerPercussion.Play();
+			await UniTask.Yield();
+		}
+
+		if (currentAttempts >= maxAttempts)
+		{
+			Debug.Log("Failed to play OST!");
+			return;
+		}
+
+		Debug.Log($"Playing OST after {currentAttempts} attempts.");
+	}
+
+	void OSTMatchPitch()
+	{
+		if (musicPlayerPercussion.pitch != musicPlayerMelodic.pitch)
+		{
+			Debug.Log("Percussion Pitch matched to Melodic Pitch!");
+			musicPlayerPercussion.pitch = musicPlayerMelodic.pitch;
+			musicPlayerPercussion.timeSamples = musicPlayerMelodic.timeSamples;
 		}
 	}
 
@@ -80,7 +171,7 @@ public class KennyGameManager : MonoBehaviour
 
 		audioSource.pitch = pitch;
 		int pitchVariance = Random.Range(0, maxPitchVariance + 1);
-        for (int i = 0; i < pitchVariance; i++)
+		for (int i = 0; i < pitchVariance; i++)
 		{
 			audioSource.pitch *= 1.059463f;
 		}
@@ -95,12 +186,10 @@ public class KennyGameManager : MonoBehaviour
 	{
 		if (EventService.ReadValue(data, out PlaySFXInfo playSFXInfo))
 		{
-			Debug.Log($"Success: {playSFXInfo.SFXName}");
-
 			switch (playSFXInfo.SFXName)
 			{
 				case "RogueAttack":
-					PlaySFX(audioClips[Random.Range(0, 5)], playerCon.transform.position, 0.4f, 0.6f, 1, 5);
+					PlaySFX(audioClips[Random.Range(0, 5)], _playerController.transform.position, 0.2f, 0.3f, 1, 5);
 					break;
 				case "PlayerHurt":
 					PlaySFX(audioClips[Random.Range(6, 9)], playSFXInfo.SFXPosition, 0.3f, 0.5f, 1, 5);
@@ -139,23 +228,41 @@ public class KennyGameManager : MonoBehaviour
 		}
 	}
 
-	void CombatStatus(object data)
+	void OnTeleportPlayer(object data)
 	{
-		if (EventService.ReadValue(data, out bool status))
+		if (EventService.ReadValue(data, out Vector3 teleportPosition))
 		{
-			if (status)
-			{
-				this.GetComponent<AudioLowPassFilter>().enabled = false;
-			}
-			else
-			{
-				this.GetComponent<AudioLowPassFilter>().enabled = true;
-			}
+			//Debug.Log($"Teleport player to {teleportPosition}");
+			_playerController.gameObject.transform.position = teleportPosition;
 		}
 		else
 		{
 			Debug.Log("Failed");
 		}
+	}
+
+	void CombatStatus(object data)
+	{
+		if (EventService.ReadValue(data, out bool status))
+		{
+			//Debug.Log($"Combat Status: {status}");
+			_ = QueueCombatStatusChange(status, status == true ? lowPassCutoffFrequencyGainDelay : lowPassCutoffFrequencyLoseDelay);
+		}
+		else
+		{
+			Debug.Log("Failed");
+		}
+	}
+
+	async UniTask QueueCombatStatusChange(bool status, float delay = 1)
+	{
+		if (lowPassCutoffFrequency == status) return;
+		float startTime = Time.time;
+		while (Time.time < startTime + delay)
+		{
+			await UniTask.Yield();
+		}
+		lowPassCutoffFrequency = status;
 	}
 
 	public int GetPower()
@@ -166,8 +273,7 @@ public class KennyGameManager : MonoBehaviour
 	void AddPower()
 	{
 		power += 10;
-		Debug.Log(power);
-		playerCon.UpdatePower(power);
+		_playerController.UpdatePower(power);
 		powerText.text = "Power: " + power;
 		switch (power)
 		{
@@ -187,21 +293,31 @@ public class KennyGameManager : MonoBehaviour
 				powerText.color = Color.green;
 				break;
 
-<<<<<<< Updated upstream
-        }
-    }
-    public void UpdateWorld(int index, bool enter)
-    {
-		map.RevealLocation(index, enter);
-    }
-    public void UpdateHealth(int value)
-=======
 		}
 	}
+
+	public void UpdateWorld(int index, bool enter)
+	{
+		_mapGenerator.RevealLocation(index, enter);
+		if (enter)
+		{
+			//Debug.Log("Open Door Sound");
+			PlaySFX(audioClips[13], _playerController.gameObject.transform.position, 0.5f, 0.6f, 1, 3);
+		}
+	}
+
 	public void UpdateHealth(int value)
->>>>>>> Stashed changes
 	{
 		healthText.text = "Health: " + value;
 	}
 
+    void OnDestroy()
+    {
+        // Events
+		EventService.Disconnect("SetCameraPosition", OnSetCameraPosition);
+		EventService.Disconnect("AddPower", AddPower);
+		EventService.Disconnect("CombatStatus", CombatStatus);
+		EventService.Disconnect("TeleportPlayer", OnTeleportPlayer);
+		EventService.Disconnect("PlaySFX", OnPlaySFX);
+    }
 }

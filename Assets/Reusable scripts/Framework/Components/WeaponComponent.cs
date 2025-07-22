@@ -71,7 +71,7 @@ public class WeaponComponent : MonoBehaviour
     public void Reload()
     {
         //currentWeapon.primaryFire.TryReload();
-        currentWeapon.TryReload();
+        _ = currentWeapon.TryReload();
     }
 
     public void SetAttackSpawn(Transform setAttackSpawn)
