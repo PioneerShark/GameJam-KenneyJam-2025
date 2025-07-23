@@ -2622,7 +2622,7 @@ GameObject:
   - component: {fileID: 9012671938478739621}
   - component: {fileID: 4289807973223184327}
   m_Layer: 0
-  m_Name: RoomTypeBase 1
+  m_Name: PFB_RoomBase
   m_TagString: Untagged
   m_Icon: {fileID: -1412012063857583412, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0

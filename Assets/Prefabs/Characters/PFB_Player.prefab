@@ -481,10 +481,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _Animator: {fileID: 944819635264810859}
-  _lookAtTransform: {fileID: 2652295123786685263}
+  _aimTransform: {fileID: 0}
+  _mouseTransform: {fileID: 0}
   _attackSpawn: {fileID: 9180923997235691574}
   rotationSpeed: 8
   animationTransitionSpeed: 8
+  _aimSmoothSpeed: 10
 --- !u!114 &4475854547207466798
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -504,6 +506,9 @@ MonoBehaviour:
   collisionMask:
     serializedVersion: 2
     m_Bits: 640
+  pushMask:
+    serializedVersion: 2
+    m_Bits: 0
   moveVector: {x: 0, y: 0}
 --- !u!114 &1537922554612070610
 MonoBehaviour:
@@ -527,7 +532,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2067226821007691104}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 57e2589d4f8ef214eb8d17b04713900c, type: 3}
   m_Name: 
@@ -542,7 +547,7 @@ MonoBehaviour:
   snapToPosition: 1
   snapToRotation: 0
   snapToDistance: 0
-  updateInEditMode: 1
+  updateInEditMode: 0
   _targetCamera: {fileID: 0}
   _targetPanTowards: {fileID: 0}
 --- !u!114 &7545884457177847810

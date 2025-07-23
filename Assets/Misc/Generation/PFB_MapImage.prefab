@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4073208490675114507}
   - component: {fileID: 5679832318131526344}
   m_Layer: 5
-  m_Name: PFB_Image
+  m_Name: PFB_MapImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
