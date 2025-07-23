@@ -159,6 +159,6 @@ public class HealthComponent : MonoBehaviour
     {
         await UniTask.Yield();
         await UniTask.Delay(3000);
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("SCN_Menu");
     }
 }
