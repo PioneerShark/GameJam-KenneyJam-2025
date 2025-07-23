@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using static Framework;
 using Cysharp.Threading.Tasks;
+using System.Threading;
 
 struct PlaySFXInfo
 {
@@ -51,6 +52,9 @@ public class KennyGameManager : MonoBehaviour
 
 	int power = 0;
 
+	private CancellationTokenSource _cancellationTokenSource;
+    private CancellationToken _cancellationToken => _cancellationTokenSource.Token;
+
 	void Awake()
 	{
 		if (Instance != null && Instance != this)
@@ -76,6 +80,7 @@ public class KennyGameManager : MonoBehaviour
 		powerText.text = "Power: " + power;
 
 		Cursor.visible = false;
+		_cancellationTokenSource = new CancellationTokenSource();
 	}
 
 	void Start()
@@ -245,8 +250,12 @@ public class KennyGameManager : MonoBehaviour
 	{
 		if (EventService.ReadValue(data, out bool status))
 		{
-			//Debug.Log($"Combat Status: {status}");
-			_ = QueueCombatStatusChange(status, status == true ? lowPassCutoffFrequencyGainDelay : lowPassCutoffFrequencyLoseDelay);
+			// Assume current queue exists and cancel it
+			_cancellationTokenSource?.Cancel();
+			_cancellationTokenSource?.Dispose();
+			_cancellationTokenSource = new CancellationTokenSource();
+
+			_ = QueueCombatStatusChange(status, status ? lowPassCutoffFrequencyGainDelay : lowPassCutoffFrequencyLoseDelay);
 		}
 		else
 		{
@@ -260,7 +269,8 @@ public class KennyGameManager : MonoBehaviour
 		float startTime = Time.time;
 		while (Time.time < startTime + delay)
 		{
-			await UniTask.Yield();
+			_cancellationToken.ThrowIfCancellationRequested();
+			await UniTask.Yield(PlayerLoopTiming.Update, _cancellationToken);
 		}
 		lowPassCutoffFrequency = status;
 	}
@@ -311,13 +321,17 @@ public class KennyGameManager : MonoBehaviour
 		healthText.text = "Health: " + value;
 	}
 
-    void OnDestroy()
-    {
-        // Events
+	void OnDestroy()
+	{
+		// Events
 		EventService.Disconnect("SetCameraPosition", OnSetCameraPosition);
 		EventService.Disconnect("AddPower", AddPower);
 		EventService.Disconnect("CombatStatus", CombatStatus);
 		EventService.Disconnect("TeleportPlayer", OnTeleportPlayer);
 		EventService.Disconnect("PlaySFX", OnPlaySFX);
+
+		// Tasks
+		_cancellationTokenSource?.Cancel();
+        _cancellationTokenSource?.Dispose();
     }
 }

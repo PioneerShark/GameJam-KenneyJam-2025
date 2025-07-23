@@ -161,7 +161,7 @@ public class RoomSpawns : MonoBehaviour
         }
     }
 
-    private void Oestroy()
+    private void OnDestroy()
     {
         _ownerSceneTokenSource?.Cancel();
         _ownerSceneTokenSource?.Dispose();
