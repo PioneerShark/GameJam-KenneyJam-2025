@@ -49,6 +49,7 @@ public class GunBaseScriptable : AttackScriptable
     public override void AttackEnd(GameObject parent)
     {
         isAttacking = false;
+        weapon.SetState(WeaponState.Idle);
     }
 
     public static Vector2 rotate(Vector2 v, float delta)

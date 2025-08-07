@@ -23,7 +23,7 @@ public class MovementComponent : MonoBehaviour
     [HideInInspector]
     public Transform target;
 
-    float skinWidth = 0.06f;
+    float skinWidth = 0.001f;
     int collideIterations = 5;
     public Collider col;
     public LayerMask collisionMask;
@@ -86,8 +86,6 @@ public class MovementComponent : MonoBehaviour
         {
             Move(moveVector + Repel());
         }
-
-        Repel();
     }
 
     private Vector2 Repel()

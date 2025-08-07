@@ -14,6 +14,7 @@ public class WeaponComponent : MonoBehaviour
     private Weapon currentWeapon;
     private int power;
     bool v2, v3, v4, v5 = false;
+    bool firing = false;
 
 
     [SerializeField] private List<Weapon> weapons;
@@ -45,20 +46,23 @@ public class WeaponComponent : MonoBehaviour
         {
             weapons[i].RegenAmmo();
         }
+
         
-        currentWeapon.primaryFire.WeaponUpdate();
         currentWeapon.lookVector = attackDirection;
         currentWeapon.firepoint = attackSpawn;
+        currentWeapon.primaryFire.WeaponUpdate();
     }
 
     public void AttackStarted(bool primary)
     {
         primaryFire = primary;
+        
 
         if (!currentWeapon.primaryFire.isAttacking && !currentWeapon.secondaryFire.isAttacking)
         {
             if (CheckAttack(currentWeapon.primaryFire) && primaryFire)
             {
+                firing = true;
                 currentWeapon.primaryFire.AttackStart(this.gameObject);
             }
             if (CheckAttack(currentWeapon.secondaryFire) && !primaryFire)
@@ -95,13 +99,23 @@ public class WeaponComponent : MonoBehaviour
         if (CheckAttack(currentWeapon.primaryFire) && primary)
         {
             currentWeapon.primaryFire.AttackEnd(this.gameObject);
+            firing = false;
         }
-
 
         if (CheckAttack(currentWeapon.secondaryFire) && !primary)
         {
             currentWeapon.secondaryFire.AttackEnd(this.gameObject);
         }
+    }
+
+    public bool AttackCancel(int weapon)
+    {
+
+        bool attacking = firing;
+        SwapWeapon(weapon);
+        return attacking;
+        
+
     }
 
     public void EquipWeapon(Weapon weapon)
@@ -130,6 +144,7 @@ public class WeaponComponent : MonoBehaviour
 
     public void SwapWeapon(int weapon)
     {
+        AttackCancelled(true);
         currentWeapon = weapons[weapon];
         InitialiseWeaponStats();
     }
@@ -151,47 +166,51 @@ public class WeaponComponent : MonoBehaviour
     {
         return currentWeapon;
     }
+    private void AttackStart()
+    {
+        AttackStarted(true);
+    }
 
     public void UpdatePower(int value)
     {
         power = value;
+        bool resume = true;
         switch (power)
         {
             case > 999:
                 currentWeapon.primaryFire.damage = (value / 500);
                 break;
             case > 799:
-                    if (v5) return;
-                    AttackCancelled(true);
-                    v5 = true;
-                    AttackCancelled(true);
-                    SwapWeapon(4);
+                if (v5) return;
+                v5 = true;
+                resume = AttackCancel(4);
                 break;
             case > 599:
                 if (v4) return;
                 v4 = true;
-                AttackCancelled(true);
-                SwapWeapon(3);
-                AttackCancelled(false);
+                resume = AttackCancel(3);
                 break;
             case > 399:
                 if (v3) return;
                 v3 = true;
-                AttackCancelled(true);
-                SwapWeapon(2);
-                AttackCancelled(false);
+                resume = AttackCancel(2);
                 break;
             case > 199:
                 if (v2) return;
                 v2 = true;
-                AttackCancelled(true);
-                SwapWeapon(1);
-                AttackCancelled(false);
+                resume = AttackCancel(1);
                 break;
              
         }
         ;
+        if (resume)
+        {
+
+            Invoke("AttackStart", 0.3f);
             
+
+        }
+
     }
 }
 
